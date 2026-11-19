@@ -59,3 +59,9 @@ Maryna Kapula · Nov 18, 2026
 
 
 37. The app language is English.
+
+
+
+https://daisyui.com/store/    Посмотреть стили daisyUI (components, themes)
+Выбрать тему и компоненты: шапка, карточка, кнопки, формы
+Создать папки students, meetups, notifications
