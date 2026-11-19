@@ -1,13 +1,8 @@
-# App plan: events for Erasmus students (AMFI)
+
 
 Maryna Kapula · Nov 18, 2026
 
-## Idea
 
-A Meetup-like app for Erasmus students hosted by [AMFI International](https://www.amfinternational.org/chi-siamo-eng), an organisation in Avezzano. Students create events in any city (meetups, pizza nights, trips) and join other students' events, and an AMFI admin reviews every event so there are no fakes.
-
-- Language: English
-- Deadline: Nov 27, 2026
 
 ## Full list
 
