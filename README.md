@@ -31,7 +31,7 @@ Node). The source is `assets/css/source.css`; the built `assets/static/css/tailw
 git-ignored.
 
 Emails are not sent in development: `.env.example` writes each one to a file in `var/mail/`.
-Open the newest file there to follow an invitation or password-reset link.
+Open the newest file there to follow a verification or password-reset link.
 
 ## Checks
 

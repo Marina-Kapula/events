@@ -149,7 +149,8 @@ TAILWIND_CLI_VERSION: str = "2.10.35"
 TAILWIND_CLI_SRC_CSS: str = "assets/css/source.css"
 TAILWIND_CLI_DIST_CSS: str = "css/tailwind.css"
 
-# Email (invitations, password resets, notifications), set through EMAIL_* variables.
+# Email (verification links, password resets, notifications), set through EMAIL_*
+# variables.
 # The options depend on the backend; an unknown one raises KeyError.
 _EMAIL_BACKEND = env_str("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 _EMAIL_OPTIONS: dict[str, dict[str, object]] = {

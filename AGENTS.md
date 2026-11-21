@@ -1,8 +1,10 @@
 # Rules for agents and contributors
 
-This is a student project: a small, idiomatic Django app. Pages are rendered on the server, forms
-are plain HTML forms with full page loads, and there is as little JavaScript as possible (no HTMX).
-Prefer the plain Django way a student can read and explain over anything clever.
+This is a student project: a small, idiomatic, hypermedia-driven Django app. The server sends
+HTML; links and forms move the user through the app, with full page loads and as little
+JavaScript as possible (no HTMX). Reach for Django's own features first (forms, auth views,
+messages, the admin, template inheritance and partials, QuerySets), and prefer the plain Django
+way a student can read and explain over anything clever.
 
 - Run `scripts/check.sh` before calling any code change done; it must pass. On a fresh checkout, run
   `cp .env.example .env` first. On Windows, run it from Git Bash (`bash scripts/check.sh`).
@@ -53,8 +55,8 @@ Prefer the plain Django way a student can read and explain over anything clever.
   On errors, render the same page again with the bound form, status 200.
 - Views check who may do what (the organizer for their own event, the admin for reviews);
   everyone else gets a 404. Tests cover the forbidden case.
-- Style with daisyUI components (https://daisyui.com/components/: `btn`, `card`, `badge`,
-  `fieldset`, `input`, `alert`, `navbar`, `dock`) before hand-written Tailwind utilities.
+- Style with the UI library chosen in SPEC.md §2 #19 (issue 003); prefer its components over
+  hand-written CSS.
 - Reuse markup with Django's template partials: `{% partialdef name %}` in the page template,
   `{% include "app/page.html#name" %}` from another page. Not separate `_fragment.html` files.
 - UI-only state (open/close, focus, Esc, dismiss) uses HTML/CSS first (`<dialog>`, `popover`,
@@ -69,7 +71,9 @@ Prefer the plain Django way a student can read and explain over anything clever.
 - Multi-write services use `transaction.atomic`; emails and other side effects go in
   `transaction.on_commit`.
 - Tests: `tests/<app>/test_*.py` through `django.test.Client`; data from the `make_*` fixtures in
-  `tests/conftest.py`; emails checked in `mailoutbox`.
+  `tests/conftest.py`; emails checked in `mailoutbox`, inside
+  `django_capture_on_commit_callbacks(execute=True)` (`docs/testing/emails.md`).
+- Links in emails and the QR code start with `settings.SITE_URL`, never `request`.
 
 ## Style
 - Smallest change that solves the problem, in the fewest files.
@@ -95,8 +99,13 @@ Prefer the plain Django way a student can read and explain over anything clever.
 - While reading the notes: read the index (`docs/index.md`) first and find the notes relevant to
   the task you are working on.
 
-## Git
-- Issues are `issues/NNN-slug.md`, tracked in `issues/_kanban.md`; one branch per issue, named like
-  the file, merged with `--no-ff` as `Merge NNN: <summary>`.
+## Git (`docs/workflow/git.md`)
+- Issues are `issues/NNN-slug.md`, tracked in `issues/_kanban.md`. One feature branch per issue,
+  named like the file (`007-registration-windows`), made from an up-to-date `main`.
+- Small commits, each one change with a short imperative subject. Never commit to `main` directly.
+- Push the branch and open a pull request on GitHub; it is reviewed before it is merged (merge
+  commit `Merge NNN: <summary>`), then the branch is deleted.
+- The issue's last commit ticks its tasks and sets its `Status:` line to done. Branches don't touch
+  `issues/_kanban.md`; whoever merges moves the card on `main`.
 - If working on an issue branch, subagents can commit.
 - If work needs to be done in parallel, use worktrees.

@@ -19,3 +19,12 @@ def _static_files_without_collectstatic() -> Iterator[None]:
         WHITENOISE_AUTOREFRESH=True,
     ):
         yield
+
+
+@pytest.fixture(autouse=True)
+def _fast_password_hashing() -> Iterator[None]:
+    # Django's default hasher is slow on purpose; tests create many users.
+    with override_settings(
+        PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"]
+    ):
+        yield

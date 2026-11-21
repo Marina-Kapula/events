@@ -180,7 +180,7 @@ On Dokku you set them with `dokku config:set`. They are stored on the server, ne
 ```sh
 sudo dokku config:set --no-restart <APP> \
   DJANGO_DEBUG=false DJANGO_HTTPS=true DJANGO_TIME_ZONE=Europe/Rome \
-  DJANGO_ALLOWED_HOSTS=<DOMAIN>,localhost \
+  DJANGO_ALLOWED_HOSTS=<DOMAIN>,localhost DJANGO_SITE_URL=https://<DOMAIN> \
   DJANGO_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(50))')" >/dev/null
 ```
 
@@ -190,6 +190,8 @@ Why each one:
 - `DJANGO_HTTPS=true`: HTTPS ends at nginx, and nginx talks plain HTTP to your app. This tells
   Django to trust nginx's header, and turns on secure cookies. Without it every login fails
   with a 403 (CSRF check).
+- `DJANGO_SITE_URL`: the start of every link in emails and in the registration QR code. Emails
+  are sent without a browser request, so the app can't guess its own address.
 - `DJANGO_ALLOWED_HOSTS`: the host names Django answers to. `localhost` is for Dokku's
   healthcheck (`app.json`), which sends `Host: localhost`. Without it the check gets a 400 and
   the deploy stops.
@@ -200,17 +202,20 @@ Why each one:
 
 ### Email
 
-The app sends invitations and password resets by email. Production uses Brevo's SMTP relay. Set
+The app sends verification links, password resets and notifications by email. Production uses Brevo's SMTP relay. Set
 the `EMAIL_*` values from your Brevo account (their SMTP page shows the login and the key). Do
 not set `EMAIL_BACKEND`: the default sends real mail.
 
 ```sh
 sudo dokku config:set --no-restart <APP> \
   EMAIL_HOST=smtp-relay.brevo.com EMAIL_PORT=587 EMAIL_USE_TLS=true \
-  EMAIL_HOST_USER=<your Brevo SMTP login> EMAIL_HOST_PASSWORD=<your Brevo SMTP key> >/dev/null
+  EMAIL_HOST_USER=<your Brevo SMTP login> EMAIL_HOST_PASSWORD=<your Brevo SMTP key> \
+  DJANGO_DEFAULT_FROM_EMAIL='AMFI Meetups <<your verified sender address>>' >/dev/null
 ```
 
-The sender address the app uses must be verified in Brevo, or Brevo drops the mail. Without
+`DJANGO_DEFAULT_FROM_EMAIL` is the sender of every email. Its address must be verified in Brevo
+(Senders), or Brevo drops the mail. Test it with
+`sudo dokku run <APP> python manage.py sendtestemail <YOUR_EMAIL>`. Without
 `EMAIL_HOST` the app tries an SMTP server on `localhost`, and no mail arrives.
 
 Start the line with a space if it has a password: Ubuntu's bash then keeps it out of the
@@ -348,4 +353,4 @@ done
   [deployment tasks (`release`)](https://dokku.com/docs/advanced-usage/deployment-tasks/),
   [persistent storage](https://dokku.com/docs/advanced-usage/persistent-storage/),
   [dokku-letsencrypt](https://github.com/dokku/dokku-letsencrypt)
-- Django: [deployment checklist](https://docs.djangoproject.com/en/stable/howto/deployment/checklist/)
+- Django: [deployment checklist](https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/)

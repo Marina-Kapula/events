@@ -34,8 +34,9 @@ select = ["E", "F", "W", "I", "UP", "B", "DJ", "PT", "SIM", "RUF"]
 allowed-confusables = ["–"]
 
 [tool.ruff.format]
-# Ruff 0.16 also formats Python blocks in Markdown; SPEC.md's sketches keep their layout.
-exclude = ["SPEC.md"]
+# Ruff 0.16 also formats Python blocks in Markdown. The spec, issues and notes hold partial
+# snippets (one `path(...)` from a list, a method without its class) that it would rewrap.
+exclude = ["SPEC.md", "issues/**", "docs/**"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
