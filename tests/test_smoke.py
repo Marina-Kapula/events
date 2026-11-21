@@ -1,9 +1,11 @@
 """Skeleton smoke tests (SPEC.md §11): auth wiring, login and logout, admin."""
 
+from collections.abc import Callable
+
 import pytest
 from django.apps import apps
 from django.contrib import admin
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.db.models import Model
 from django.test import Client
 from django.urls import reverse
@@ -11,6 +13,7 @@ from django.urls import reverse
 # The URLconf unregisters auth.Group, and collection builds the parameter list below
 # before any URL is resolved.
 import config.urls  # noqa: F401
+from accounts.models import User
 
 pytestmark = pytest.mark.django_db
 
@@ -49,19 +52,19 @@ def test_login_page_is_public(client: Client) -> None:
 
 
 def test_login_lands_on_home_and_logout_returns_to_login(
-    client: Client, django_user_model: type[User]
+    client: Client, make_student: Callable[..., User]
 ) -> None:
-    django_user_model.objects.create_user("student1", password="s3cret-pass")
+    make_student(email="student1@example.com")
 
     response = client.post(
-        LOGIN_URL, {"username": "student1", "password": "s3cret-pass"}
+        LOGIN_URL, {"username": "Student1@Example.com ", "password": "s3cret-pass"}
     )
     assert response.status_code == 302
     assert response["Location"] == "/"
 
     home = client.get("/")
     assert home.status_code == 200
-    assert b"student1" in home.content
+    assert b"student1@example.com" in home.content
     assert b'aria-current="page"' in home.content
     assert reverse("admin:index").encode() in home.content
     assert b'<form method="post" action="/accounts/logout/">' in home.content
@@ -73,10 +76,10 @@ def test_login_lands_on_home_and_logout_returns_to_login(
 
 
 def test_logout_by_get_does_not_log_out(
-    client: Client, django_user_model: type[User]
+    client: Client, make_student: Callable[..., User]
 ) -> None:
-    django_user_model.objects.create_user("student1", password="s3cret-pass")
-    client.login(username="student1", password="s3cret-pass")
+    make_student(email="student1@example.com")
+    client.login(username="student1@example.com", password="s3cret-pass")
 
     response = client.get("/accounts/logout/")
 

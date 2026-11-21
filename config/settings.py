@@ -55,7 +55,12 @@ INSTALLED_APPS: list[str] = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_tailwind_cli",
+    "django_countries",  # country list for the nationality field
+    "accounts",  # users
 ]
+
+# Use our own User model instead of Django's built-in one.
+AUTH_USER_MODEL: str = "accounts.User"
 
 MIDDLEWARE: list[str] = [
     "django.middleware.security.SecurityMiddleware",

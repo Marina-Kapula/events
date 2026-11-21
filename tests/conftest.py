@@ -1,7 +1,12 @@
-from collections.abc import Iterator
+import itertools
+from collections.abc import Callable, Iterator
 
 import pytest
 from django.test import override_settings
+
+from accounts.models import User
+
+PASSWORD = "s3cret-pass"
 
 
 @pytest.fixture(autouse=True)
@@ -28,3 +33,44 @@ def _fast_password_hashing() -> Iterator[None]:
         PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"]
     ):
         yield
+
+
+@pytest.fixture
+def make_student(db: None) -> Callable[..., User]:
+    numbers = itertools.count(1)
+
+    def make(email: str | None = None, **overrides: object) -> User:
+        n = next(numbers)
+        fields: dict[str, object] = {
+            "full_name": f"Student {n}",
+            "photo": "photos/users/student.jpg",
+            "nationality": "ES",
+            "age": 22,
+            "gender": User.Gender.FEMALE,
+            "is_active": True,
+            **overrides,
+        }
+        return User.objects.create_user(
+            email or f"student{n}@example.com", PASSWORD, **fields
+        )
+
+    return make
+
+
+@pytest.fixture
+def make_staff(db: None) -> Callable[..., User]:
+    numbers = itertools.count(1)
+
+    def make(**overrides: object) -> User:
+        n = next(numbers)
+        fields: dict[str, object] = {"full_name": f"Staff {n}", **overrides}
+        return User.objects.create_superuser(
+            f"staff{n}@example.com", PASSWORD, **fields
+        )
+
+    return make
+
+
+@pytest.fixture
+def admin_user(make_staff: Callable[..., User]) -> User:
+    return make_staff()
