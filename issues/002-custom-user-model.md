@@ -1,6 +1,6 @@
 # Log in with an email: a custom user model
 
-Status: todo · Opened: 2026-11-21 · Milestone: M1 · Depends on: — · Blocks: every issue with a
+Status: done · Opened: 2026-11-21 · Milestone: M1 · Depends on: — · Blocks: every issue with a
 migration
 
 ## Why
