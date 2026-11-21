@@ -1,0 +1,11 @@
+/* Tailwind v4 + daisyUI 5 input. Build with `manage.py tailwind build` (or `tailwind runserver`);
+   the output, assets/static/css/tailwind.css, is git-ignored. Components: https://daisyui.com/components/ */
+@import "tailwindcss";
+
+/* Light by default, dark when the device prefers it. */
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
+
+/* Scan the templates explicitly, whatever the working dir. Each app adds its own line. */
+@source "../../templates";

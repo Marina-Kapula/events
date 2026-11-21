@@ -1,12 +1,31 @@
-# Virtual environment
-.venv/
-
-# Python cache
+# Python-generated files
 __pycache__/
-*.pyc
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
-# Local database
-db.sqlite3
+# macOS Finder metadata
+.DS_Store
 
-# Uploaded photos
-media/
+# Virtual environments
+.venv
+
+# Local database, uploaded photos, emails and environment (students' personal data / secrets)
+var/
+.env
+*.sqlite3*
+
+# Tailwind: the downloaded standalone CLI and the built stylesheet
+.django_tailwind_cli/
+assets/static/css/tailwind.css
+
+# collectstatic output (built into the Docker image)
+staticfiles/
+
+# Agent tooling state
+.omc
+.claude/worktrees
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

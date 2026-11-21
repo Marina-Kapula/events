@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Log in · AMFI Meetups{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<main id="main" class="flex min-h-screen items-center justify-center px-4 py-10">
+  <div class="w-full max-w-sm">
+    <p class="mb-6 text-center text-2xl font-semibold">AMFI Meetups</p>
+    <form method="post" action="{% url 'login' %}" class="card bg-base-100 shadow-sm">
+      <div class="card-body">
+        {% csrf_token %}
+        <h1 class="card-title">Log in</h1>
+        {% if form.non_field_errors %}
+          <div role="alert" class="alert alert-error alert-soft">
+            <div>{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+          </div>
+        {% endif %}
+        <fieldset class="fieldset">
+          <label class="fieldset-legend" for="id_username">{{ form.username.label }}</label>
+          <input type="text" name="username" id="id_username" value="{{ form.username.value|default_if_none:'' }}" required autofocus
+                 autocomplete="username" autocapitalize="none" spellcheck="false"
+                 class="input w-full{% if form.username.errors %} input-error{% endif %}"{% if form.username.errors %} aria-invalid="true"{% endif %}>
+          {% for error in form.username.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+        </fieldset>
+        <fieldset class="fieldset">
+          <label class="fieldset-legend" for="id_password">Password</label>
+          <input type="password" name="password" id="id_password" required autocomplete="current-password"
+                 class="input w-full{% if form.password.errors %} input-error{% endif %}"{% if form.password.errors %} aria-invalid="true"{% endif %}>
+          {% for error in form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+        </fieldset>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn btn-primary mt-2">Log in</button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,23 @@
+{
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "healthchecks": {
+    "web": [
+      {
+        "type": "startup",
+        "name": "login page",
+        "path": "/accounts/login/",
+        "httpHeaders": [
+          {
+            "name": "Host",
+            "value": "localhost"
+          }
+        ],
+        "attempts": 5
+      }
+    ]
+  }
+}

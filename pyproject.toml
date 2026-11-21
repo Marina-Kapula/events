@@ -1,0 +1,42 @@
+[project]
+name = "events"
+version = "0.1.0"
+description = "Meetup-style events for Erasmus students hosted by AMFI International"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "django>=6.1,<6.2",
+    "django-stubs-ext>=6.1,<6.2",
+    "django-tailwind-cli>=4.8,<4.9",
+    "gunicorn>=26.2,<27",
+    "whitenoise>=6.12,<7",
+]
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.1,<6.2",
+    "pyrefly>=1.3,<1.4",
+    "pytest>=9.1.1",
+    "pytest-django>=4.14.0",
+    "ruff>=0.16.9",
+]
+
+[tool.pyrefly]
+preset = "strict"
+project-excludes = ["**/migrations/**"]
+
+[tool.ruff]
+target-version = "py314"
+extend-exclude = ["**/migrations/**"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "DJ", "PT", "SIM", "RUF"]
+allowed-confusables = ["–"]
+
+[tool.ruff.format]
+# Ruff 0.16 also formats Python blocks in Markdown; SPEC.md's sketches keep their layout.
+exclude = ["SPEC.md"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+testpaths = ["tests"]

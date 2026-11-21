@@ -1,0 +1,22 @@
+# Personal data and secrets never go into the image (AGENTS.md), including a database
+# copy or another env file outside var/. `**/` also covers git worktrees under
+# .claude/worktrees/, which hold their own .env and .venv/.
+**/.env
+**/.env.*
+!.env.example
+var/
+**/*.sqlite3*
+
+# Rebuilt inside the image, or not needed there.
+.git/
+**/.venv/
+.django_tailwind_cli/
+assets/static/css/tailwind.css
+staticfiles/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+.omc/
+.claude/
+mockups/
+issues/
