@@ -124,3 +124,36 @@ def test_unknown_email_backend_refuses_to_load() -> None:
 
     assert result.returncode != 0
     assert "KeyError" in result.stderr
+
+
+def test_site_url_defaults_to_the_dev_server() -> None:
+    result = settings_value(
+        "s.SITE_URL", DJANGO_DEBUG="true", DJANGO_SECRET_KEY="x", DJANGO_SITE_URL=""
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "http://127.0.0.1:8000"
+
+
+def test_site_url_loses_its_trailing_slash() -> None:
+    result = settings_value(
+        "s.SITE_URL",
+        DJANGO_DEBUG="true",
+        DJANGO_SECRET_KEY="x",
+        DJANGO_SITE_URL="https://meetups.example.com/",
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "https://meetups.example.com"
+
+
+def test_default_from_email_comes_from_the_environment() -> None:
+    result = settings_value(
+        "s.DEFAULT_FROM_EMAIL",
+        DJANGO_DEBUG="true",
+        DJANGO_SECRET_KEY="x",
+        DJANGO_DEFAULT_FROM_EMAIL="meetups@example.com",
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "meetups@example.com"

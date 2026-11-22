@@ -31,7 +31,7 @@
 - [002-custom-user-model.md](002-custom-user-model.md)
 - [003-choose-a-ui-library.md](003-choose-a-ui-library.md)
 
-
+- [005-email-with-brevo.md](005-email-with-brevo.md) почти готово
 - [006-photos.md](006-photos.md)
 
 # backlog

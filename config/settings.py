@@ -179,3 +179,6 @@ _EMAIL_OPTIONS: dict[str, dict[str, object]] = {
 MAILERS: dict[str, dict[str, object]] = {
     "default": {"BACKEND": _EMAIL_BACKEND, "OPTIONS": _EMAIL_OPTIONS[_EMAIL_BACKEND]}
 }
+
+DEFAULT_FROM_EMAIL: str = env_str("DJANGO_DEFAULT_FROM_EMAIL", "webmaster@localhost")
+SITE_URL: str = env_str("DJANGO_SITE_URL", "http://127.0.0.1:8000").rstrip("/")
