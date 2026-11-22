@@ -21,12 +21,13 @@
 
 # on-progress
 
-- [003-choose-a-ui-library.md](003-choose-a-ui-library.md)
+- [004-first-deploy.md](004-first-deploy.md)
 
 # done
 
 - [001-project-skeleton.md](001-project-skeleton.md)
 - [002-custom-user-model.md](002-custom-user-model.md)
+- [003-choose-a-ui-library.md](003-choose-a-ui-library.md)
 
 # backlog
 

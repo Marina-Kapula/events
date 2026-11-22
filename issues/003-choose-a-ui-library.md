@@ -1,6 +1,6 @@
 # Choose a UI library, and style the base layout
 
-Status: todo · Opened: 2026-11-21 · Milestone: M1 · Depends on: —
+Status: done · Opened: 2026-11-21 · Milestone: M1 · Depends on: —
 
 ## Why
 
