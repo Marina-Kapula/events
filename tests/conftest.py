@@ -1,5 +1,6 @@
 import itertools
 from collections.abc import Callable, Iterator
+from pathlib import Path
 
 import pytest
 from django.test import override_settings
@@ -23,6 +24,12 @@ def _static_files_without_collectstatic() -> Iterator[None]:
         },
         WHITENOISE_AUTOREFRESH=True,
     ):
+        yield
+
+
+@pytest.fixture(autouse=True)
+def _media_root_in_tmp_path(tmp_path: Path) -> Iterator[None]:
+    with override_settings(MEDIA_ROOT=tmp_path / "media"):
         yield
 
 

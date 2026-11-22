@@ -129,6 +129,9 @@ TIME_ZONE: str = env_str("DJANGO_TIME_ZONE", "Europe/Rome")
 USE_I18N: bool = False
 USE_TZ: bool = True
 
+
+MEDIA_ROOT: Path = BASE_DIR / "var" / "media"
+MEDIA_URL: str = "media/"
 STATIC_URL: str = "static/"
 # The built stylesheet and the scripts live here; the Tailwind source stays outside the
 # static files (assets/css/source.css), so collectstatic never publishes it.

@@ -25,4 +25,5 @@ urlpatterns: list[URLPattern | URLResolver] = [
         name="logout",
     ),
     path("admin/", admin.site.urls),
+    path("media/<path:path>", views.media, name="media"),
 ]
