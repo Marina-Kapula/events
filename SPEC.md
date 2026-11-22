@@ -37,12 +37,7 @@ idiomatic Django app (server-rendered pages, plain forms, full page loads, littl
 | 16 | **Editing an approved event keeps the approved version public until the admin approves the changes; sign-ups stay open meanwhile**, and visitors see that changes are pending. Approve: the public version is updated and everyone going is notified (`docs/app-plan.md` #34). Reject: the event stays as it was, and the organizer gets the reason (#17). | Sign-ups don't stall while AMFI reviews. Replaces #16's "new sign-ups are closed". |
 | 17 | **Pending changes are a second model.** The editable fields live in an abstract base model `EventFields`; `Event` and `EventChange` (one-to-one with its event, at most one per event) inherit them. Editing an approved event creates or updates its `EventChange`; events that are pending or rejected are edited directly. In the admin the change is an inline on the event's page. Approve copies the fields over and deletes the change; reject deletes it. Max people can't go below the number already going: checked by the form, and again on approval. | Typed fields and no JSON blob. The admin sees proposed and current values on one page, with no comparison code. |
 | 18 | **Pending changes show as a warning only**: a "Changes pending" badge on the event's card and one line on its page. The proposed values are not shown. | Easiest; people going are emailed once the changes are approved. Not chosen: showing the proposed version. |
-| 19 | **The UI library is the students' choice** (issue 003). The skeleton ships a working default: Tailwind + daisyUI through django-tailwind-cli (`TAILWIND_CLI_USE_DAISY_UI`, the tailwind-cli-extra binary, no Node). Keep it or switch (Bootstrap, Pico CSS, Bulma, plain CSS, …); the choice and why go in this row and §3. | Choosing, and writing down why, is part of the learning. |
-
-| = | I picked the theme on https://daisyui.com/ | I liked lemonade and didn't want to change it. daisyUI also has a bottom menu button for phones (`dock`). Not chosen: Pico, Bootstrap, Bulma, plain CSS, because I already liked daisyUI. |
-
-
-
+| 19 | **daisyUI 5 with the lemonade theme.** I picked the theme on https://daisyui.com/ | I liked lemonade and didn't want to change it. daisyUI also has a bottom menu button for phones (`dock`). Not chosen: Pico, Bootstrap, Bulma, plain CSS, because I already liked daisyUI. |
 | 20 | **No drafts.** Saving a new event sends it to review (`pending`). A rejected event shows its reason to the organizer, who edits it (back to `pending`) or cancels it. | One state and one button fewer. Replaces `docs/app-plan.md` #12, and #15's "back to draft". |
 | 21 | **Only approved events are public.** A pending or rejected event is seen only by its organizer (and in the admin). | The list has one kind of card. Replaces #13 (events in review shown to everyone as "not approved"). |
 | 22 | **Event types are a fixed list in code** (`TextChoices`): Meetup, Food, Trip, Sport, Party, Culture, Other. | No model, admin page or data migration; a new type is one line of code. Replaces #9's type written by the organizer and #10/#31's admin-managed list. |
@@ -72,7 +67,7 @@ As the teacher's reference projects, plus email settings.
 | uv | — | env + deps; everything runs through `uv run` |
 | Django | 6.1.x | web framework, auth, admin, ORM (SQLite), email |
 | django-stubs-ext | 6.1.x | runtime `monkeypatch()` so `admin.ModelAdmin[Event]` etc. can be subscripted |
-| django-tailwind-cli | 4.8.x | the skeleton's default UI tooling: Tailwind v4 + daisyUI 5 through the standalone tailwind-cli-extra binary (no Node); issue 003 keeps or replaces it (§2 #19) |
+| django-tailwind-cli | 4.8.x | the skeleton's default UI tooling: Tailwind v4 + daisyUI 5 through the standalone tailwind-cli-extra binary (no Node) (§2 #19) |
 | gunicorn | 26.x | WSGI server in the Docker image |
 | whitenoise | 6.x | serves static files when `DEBUG` is off |
 | Pillow | current | `ImageField`, shrinking and re-saving uploaded photos (§2 #13) |
