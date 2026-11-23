@@ -1,6 +1,6 @@
 # Open a registration window with a QR code
 
-Status: todo · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002, 005
+Status: done · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002, 005
 
 ## Why
 
@@ -68,7 +68,7 @@ so you only install it:
 uv add segno
 ```
 
-- [ ] `pyproject.toml` and `uv.lock` list segno.
+- [x] `pyproject.toml` and `uv.lock` list segno.
 
 ### 2. Write the model
 
@@ -141,7 +141,7 @@ Why each piece is there:
 - **`is_open(*, now)`** takes the time as an argument (AGENTS.md, Layers): the page passes
   `timezone.now()`, and a test passes a fixed time, so it never depends on when it runs.
 
-- [ ] The model and the field are in `accounts/models.py`.
+- [x] The model and the field are in `accounts/models.py`.
 
 ### 3. Make the migration
 
@@ -155,7 +155,7 @@ with two operations: *Create model RegistrationWindow* and *Add field registrati
 user*. Open it and read it: it refers to `accounts.models.new_window_code`, which is why that
 function must keep its name.
 
-- [ ] The migration exists and `migrate` runs.
+- [x] The migration exists and `migrate` runs.
 
 ### 4. The admin pages
 
@@ -336,9 +336,9 @@ Finally, show the window in the Users page too (SPEC.md §8). In `UserAdmin`, ad
     readonly_fields = ("registration_window", "date_joined", "deleted_at")
 ```
 
-- [ ] "Add registration window" asks only for the duration and then shows the QR code.
-- [ ] The list has a "Close now" action, and an Open column.
-- [ ] The Users page shows and filters by window.
+- [x] "Add registration window" asks only for the duration and then shows the QR code.
+- [x] The list has a "Close now" action, and an Open column.
+- [x] The Users page shows and filters by window.
 
 ### 5. The public page
 
@@ -412,8 +412,8 @@ Two templates, in `accounts/templates/accounts/`. `register.html`:
 "Log out" button, as on the login page: the visitor isn't logged in. Style both pages with your
 UI library (issue 003).
 
-- [ ] In a private browser window, the link from the admin page shows "Registration is open".
-- [ ] After "Close now", the same link shows "Registration closed, ask the AMFI staff".
+- [x] In a private browser window, the link from the admin page shows "Registration is open".
+- [x] After "Close now", the same link shows "Registration closed, ask the AMFI staff".
 
 ### 6. Scan it with your phone
 
@@ -431,7 +431,7 @@ networks block this; a phone hotspot works).
 Put `.env` back afterwards. After your next deploy (issue 004), do the same on your server: there
 `DJANGO_SITE_URL` is already your domain.
 
-- [ ] Your phone opens the registration page from the QR code.
+- [x] Your phone opens the registration page from the QR code.
 
 ### 7. Tests
 
@@ -615,20 +615,20 @@ Things to notice:
   `_selected_action`: exactly what your browser sends.
 - `test_admin_opens_every_changelist` in `tests/test_smoke.py` now opens the windows list too.
 
-- [ ] The tests pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] `RegistrationWindow` exists with a random, unique code; users have a `registration_window`;
+- [x] `RegistrationWindow` exists with a random, unique code; users have a `registration_window`;
   one migration adds both.
-- [ ] The admin opens a window for 15, 30, 60 or 120 minutes, and its page shows the QR code, the
+- [x] The admin opens a window for 15, 30, 60 or 120 minutes, and its page shows the QR code, the
   link from `SITE_URL`, the expiry, open or closed, and the students who registered.
-- [ ] "Close now" closes a window early (test).
-- [ ] `/register/<code>/` is public and says open or closed; an unknown code is a 404 (tests).
-- [ ] You scanned a QR code with a phone and it opened the page.
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] "Close now" closes a window early (test).
+- [x] `/register/<code>/` is public and says open or closed; an unknown code is a 404 (tests).
+- [x] You scanned a QR code with a phone and it opened the page.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 
