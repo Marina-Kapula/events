@@ -1,6 +1,5 @@
 # todo
 
-- [009-profiles-and-passwords.md](009-profiles-and-passwords.md)
 - [008-registration-and-verification.md](008-registration-and-verification.md)
 - [010-create-an-event.md](010-create-an-event.md)
 - [012-event-list-and-event-page.md](012-event-list-and-event-page.md)
@@ -25,6 +24,7 @@
 - [003-choose-a-ui-library.md](003-choose-a-ui-library.md)
 - [006-photos.md](006-photos.md)
 - [007-registration-windows.md](007-registration-windows.md)
+- [009-profiles-and-passwords.md](009-profiles-and-passwords.md)
 
 # backlog
 
