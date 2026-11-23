@@ -1,0 +1,6 @@
+{% autoescape off %}Hi {{ event.organizer.full_name }},
+
+AMFI approved your event "{{ event.title }}". It is in the event list now, and other students
+can join it:
+{{ site_url }}{% url "event_detail" event.pk %}
+{% endautoescape %}

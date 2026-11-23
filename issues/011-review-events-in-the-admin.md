@@ -1,6 +1,6 @@
 # Approve or reject events in the admin
 
-Status: todo · Opened: 2026-11-21 · Milestone: M2 · Depends on: 010, 012
+Status: done · Opened: 2026-11-21 · Milestone: M2 · Depends on: 010, 012
 
 ## Why
 
@@ -138,7 +138,7 @@ You can edit the event and send it again, or cancel it:
 (Editing and cancelling come in 014 and 015; the event page from 012 already shows the reason to
 the organizer.)
 
-- [ ] `event_approve`, `event_reject` and the four templates.
+- [x] `event_approve`, `event_reject` and the four templates.
 
 ### 2. The buttons
 
@@ -182,7 +182,7 @@ In `EventAdmin`, name the template, below `formfield_overrides`:
 Django would find the file by its path alone; naming it here makes the link visible to the next
 reader.
 
-- [ ] A pending event's admin page shows Approve and Reject; other events don't.
+- [x] A pending event's admin page shows Approve and Reject; other events don't.
 
 ### 3. What the buttons do: `response_change`
 
@@ -243,7 +243,7 @@ says why and the status stays as it was. Anything else (plain Save) goes to Djan
 `response_change`. Django runs the whole admin request in one transaction, so the email leaves
 only after everything is saved.
 
-- [ ] Approve and Reject work from the admin page, with a message each time.
+- [x] Approve and Reject work from the admin page, with a message each time.
 
 ### 4. Tests
 
@@ -404,21 +404,21 @@ def test_the_reject_button_without_a_reason_shows_an_error(
 date and time into two inputs (`starts_at_0`, `starts_at_1`). The photo isn't sent: on a change
 form, "no new file" keeps the old one. The buttons of 014 and 015 can be tested the same way.
 
-- [ ] The tests above pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] A pending event's admin page has Approve and Reject; once it is reviewed, they are gone
+- [x] A pending event's admin page has Approve and Reject; once it is reviewed, they are gone
       (test).
-- [ ] Approve: the event is `approved` and the organizer gets an email with the event's link
+- [x] Approve: the event is `approved` and the organizer gets an email with the event's link
       (tests).
-- [ ] Reject: the event is `rejected`, `review_note` holds the reason, and the organizer gets it
+- [x] Reject: the event is `rejected`, `review_note` holds the reason, and the organizer gets it
       by email (tests).
-- [ ] Rejecting without a reason, approving a started event, and reviewing anything but a pending
+- [x] Rejecting without a reason, approving a started event, and reviewing anything but a pending
       event are refused with a message; nothing changes (tests).
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

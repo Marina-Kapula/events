@@ -1,6 +1,5 @@
 # todo
 
-- [011-review-events-in-the-admin.md](011-review-events-in-the-admin.md)
 - [013-join-leave-and-the-waiting-list.md](013-join-leave-and-the-waiting-list.md)
 - [014-edit-events-and-pending-changes.md](014-edit-events-and-pending-changes.md)
 - [015-cancel-an-event.md](015-cancel-an-event.md)
@@ -25,6 +24,7 @@
 - [008-registration-and-verification.md](008-registration-and-verification.md)
 - [010-create-an-event.md](010-create-an-event.md)
 - [012-event-list-and-event-page.md](012-event-list-and-event-page.md)
+- [011-review-events-in-the-admin.md](011-review-events-in-the-admin.md)
 
 # backlog
 

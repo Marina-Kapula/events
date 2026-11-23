@@ -1,0 +1,1 @@
+{% autoescape off %}Your event is online: {{ event.title }}{% endautoescape %}

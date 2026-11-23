@@ -1,0 +1,9 @@
+{% autoescape off %}Hi {{ event.organizer.full_name }},
+
+AMFI didn't approve your event "{{ event.title }}". The reason:
+
+{{ event.review_note }}
+
+You can edit the event and send it again, or cancel it:
+{{ site_url }}{% url "event_detail" event.pk %}
+{% endautoescape %}
