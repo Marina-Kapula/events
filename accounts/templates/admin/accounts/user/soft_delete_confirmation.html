@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<p>For each student below:</p>
+<ul>
+  <li>the account is closed: they can't log in, and their profile page is gone;</li>
+  <li>their events that haven't started are cancelled, and everyone going or waiting is emailed;</li>
+  <li>they leave every event they joined, and the waiting lists move up.</li>
+</ul>
+<p>Past events they organized stay, with the organizer shown as "Deleted student".</p>
+<ul>
+  {% for student in students %}
+    <li>{{ student.full_name }} ({{ student.email }})</li>
+  {% empty %}
+    <li>None: staff and students already deleted are skipped.</li>
+  {% endfor %}
+</ul>
+<form method="post">
+  {% csrf_token %}
+  {% for student in students %}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ student.pk }}">
+  {% endfor %}
+  <input type="hidden" name="action" value="soft_delete">
+  <input type="hidden" name="confirm" value="yes">
+  <input type="submit" value="Yes, soft delete">
+  <a href="{% url 'admin:accounts_user_changelist' %}" class="button cancel-link">No, go back</a>
+</form>
+{% endblock %}

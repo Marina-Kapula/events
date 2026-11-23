@@ -1,6 +1,6 @@
 # Soft delete a student
 
-Status: todo · Opened: 2026-11-21 · Milestone: M3 · Depends on: 013, 015
+Status: done · Opened: 2026-11-21 · Milestone: M3 · Depends on: 013, 015
 
 ## Why
 
@@ -110,7 +110,7 @@ Why each piece is there:
 - **`transaction.atomic`**: all of it, or nothing. The emails of `event_cancel` and
   `waiting_list_move_up` wait in `on_commit` until the end.
 
-- [ ] `user_soft_delete` as above.
+- [x] `user_soft_delete` as above.
 
 ### 2. The admin action, with a confirmation page
 
@@ -214,7 +214,7 @@ Also:
 - **`each_context(request)`** gives the page the admin's header, navigation and colours.
 - **One transaction per student**: if one fails, the ones before it stay soft deleted.
 
-- [ ] In `/admin/accounts/user/`, the action asks first, then soft deletes and says how many.
+- [x] In `/admin/accounts/user/`, the action asks first, then soft deletes and says how many.
 
 ### 3. What students see afterwards
 
@@ -227,7 +227,7 @@ Most of it is already there; check each with the tests below:
   Django's password reset ignore them too (§6.1.5; `PasswordResetForm` only emails active users).
 - **Gone from the going lists**: their participations are deleted.
 
-- [ ] Each of the four checked by a test.
+- [x] Each of the four checked by a test.
 
 ### 4. Tests
 
@@ -384,21 +384,21 @@ def test_the_admin_action_asks_first_then_soft_deletes_students_only(
 - **The admin test posts what the browser posts**: first the action form of the list, then the
   confirmation form.
 
-- [ ] The tests above pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] `user_soft_delete` sets `is_active = False` and `deleted_at`, in one transaction (test).
-- [ ] The student's upcoming events (pending, approved, rejected) are cancelled through
+- [x] `user_soft_delete` sets `is_active = False` and `deleted_at`, in one transaction (test).
+- [x] The student's upcoming events (pending, approved, rejected) are cancelled through
       `event_cancel`, with emails; past ones stay (test).
-- [ ] Their participations are deleted, and the waiting lists of approved events that haven't
+- [x] Their participations are deleted, and the waiting lists of approved events that haven't
       started move up, with emails (test).
-- [ ] Their profile is a 404; past events show "Deleted student"; they can't log in (tests).
-- [ ] The admin action asks for confirmation, skips staff, and reports how many were soft
+- [x] Their profile is a 404; past events show "Deleted student"; they can't log in (tests).
+- [x] The admin action asks for confirmation, skips staff, and reports how many were soft
       deleted (test).
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

@@ -9,6 +9,11 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from accounts.models import RegistrationWindow, User
 from config.emails import send_email
 
+# The one place accounts uses events (SPEC.md §4): a deleted student's events and
+# sign-ups must follow the events rules, emails included.
+from events.models import Event, Participation
+from events.services import event_cancel, waiting_list_move_up
+
 
 def user_register(*, user: User, window: RegistrationWindow, now: datetime) -> None:
     if not window.is_open(now=now):
@@ -52,3 +57,25 @@ def _send_verification_email(user: User) -> None:
             "token": default_token_generator.make_token(user),
         },
     )
+
+
+@transaction.atomic
+def user_soft_delete(*, user: User, now: datetime) -> None:
+    """Closes a student's account but keeps the row (SPEC.md §6.7)."""
+    upcoming = Event.objects.filter(organizer=user, starts_at__gt=now).exclude(
+        status=Event.Status.CANCELLED
+    )
+    for event in upcoming:
+        event_cancel(event=event, by=user, now=now)
+
+    participations = Participation.objects.filter(user=user).select_related("event")
+    events = [participation.event for participation in participations]
+    participations.delete()
+    for event in events:
+        if event.status == Event.Status.APPROVED and event.starts_at > now:
+            waiting_list_move_up(event=event)
+
+    user.is_active = False
+    user.deleted_at = now
+    user.full_clean()
+    user.save()

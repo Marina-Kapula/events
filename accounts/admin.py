@@ -4,15 +4,18 @@ from typing import ClassVar, override
 import segno
 from django import forms
 from django.conf import settings
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
 from django.db import models
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponseRedirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import SafeString, mark_safe
 
 from accounts.models import RegistrationWindow, User
+from accounts.services import user_soft_delete
 from config.photos import PhotoField
 
 
@@ -29,6 +32,36 @@ class UserAdmin(admin.ModelAdmin[User]):
     list_filter = ("is_active", "is_staff", "registration_window")
     search_fields = ("email", "full_name")
     ordering = ("email",)
+    actions = ("soft_delete",)
+
+    @admin.action(description="Soft delete the selected students")
+    def soft_delete(
+        self, request: HttpRequest, queryset: QuerySet[User]
+    ) -> TemplateResponse | None:
+        students = list(queryset.filter(is_staff=False, deleted_at=None))
+        if "confirm" not in request.POST:
+            # First click: show what will happen, and ask again.
+            return TemplateResponse(
+                request,
+                "admin/accounts/user/soft_delete_confirmation.html",
+                {
+                    **self.admin_site.each_context(request),
+                    "title": "Soft delete these students?",
+                    "students": students,
+                    "action_checkbox_name": ACTION_CHECKBOX_NAME,
+                },
+            )
+        now = timezone.now()
+        for student in students:
+            user_soft_delete(user=student, now=now)
+        self.message_user(
+            request,
+            f"Soft deleted {len(students)} student(s). Their upcoming events are "
+            "cancelled and everyone on them was emailed.",
+            messages.SUCCESS,
+        )
+        return None
+
     fields = (
         "email",
         "full_name",

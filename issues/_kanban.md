@@ -1,6 +1,5 @@
 # todo
 
-- [017-soft-delete-students.md](017-soft-delete-students.md)
 - [018-demo-data.md](018-demo-data.md)
 - [019-back-up-photos.md](019-back-up-photos.md)
 
@@ -25,6 +24,7 @@
 - [014-edit-events-and-pending-changes.md](014-edit-events-and-pending-changes.md)
 - [015-cancel-an-event.md](015-cancel-an-event.md)
 - [016-my-events.md](016-my-events.md)
+- [017-soft-delete-students.md](017-soft-delete-students.md)
 
 # backlog
 
