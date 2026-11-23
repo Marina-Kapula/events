@@ -1,5 +1,8 @@
+import secrets
+from datetime import datetime
 from typing import ClassVar, override
 
+from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -44,6 +47,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     deleted_at = models.DateTimeField(null=True, blank=True)
+    registration_window = models.ForeignKey(
+        "RegistrationWindow",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="students",
+    )
 
     objects = UserManager()
 
@@ -68,3 +78,30 @@ class User(AbstractBaseUser, PermissionsMixin):
     @override
     def __str__(self) -> str:
         return self.email
+
+
+def new_window_code() -> str:
+    return secrets.token_urlsafe(16)
+
+
+class RegistrationWindow(models.Model):
+    code = models.CharField(
+        max_length=32, unique=True, default=new_window_code, editable=False
+    )
+    opened_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+"
+    )
+    opened_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField()
+    closed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-opened_at",)
+
+    @override
+    def __str__(self) -> str:
+        opened = timezone.localtime(self.opened_at)
+        return f"Window of {opened:%d %b %Y, %H:%M}"
+
+    def is_open(self, *, now: datetime) -> bool:
+        return self.closed_at is None and now < self.expires_at
