@@ -9,6 +9,8 @@ from django.utils import timezone
 
 from accounts.models import RegistrationWindow, User
 
+# from events.models import Event
+
 PASSWORD = "s3cret-pass"
 
 

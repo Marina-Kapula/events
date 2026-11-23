@@ -58,6 +58,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
         name="password_reset_complete",
     ),
     path("admin/", admin.site.urls),
+    path("", include("events.urls")),
     path("", include("accounts.urls")),
     path("media/<path:path>", views.media, name="media"),
 ]

@@ -26,7 +26,7 @@ dev = [
 
 [tool.pyrefly]
 preset = "strict"
-project-excludes = ["**/migrations/**"]
+project-excludes = ["**/migrations/**", "**/eventsVenv/**", "**/.venv/**", "**/node_modules/**"]
 
 [tool.ruff]
 target-version = "py314"

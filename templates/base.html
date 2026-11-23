@@ -16,8 +16,7 @@
     </nav>
     <div class="ml-auto flex items-center gap-2">
       {% if not user.is_staff %}
-      {# The event form comes in issue 010. #}
-      <span class="btn btn-primary btn-sm btn-disabled hidden md:inline-flex" aria-disabled="true">+ Create event</span>
+      <a href="{% url 'event_new' %}" class="btn btn-primary btn-sm hidden md:inline-flex"{% if request.resolver_match.url_name == 'event_new' %} aria-current="page"{% endif %}>+ Create event</a>
       {% endif %}
       <span class="hidden text-sm opacity-70 lg:inline">{{ user.get_username }}</span>
       <form method="post" action="{% url 'logout' %}">
@@ -54,15 +53,15 @@
   <span class="dock-label">Events</span>
 </a>
 {% if not user.is_staff %}
-{# My events comes in issue 016, Create in issue 010. #}
+{# My events comes in issue 016. #}
 <span class="opacity-40" aria-disabled="true">
   <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>
   <span class="dock-label">My events</span>
 </span>
-<span class="opacity-40" aria-disabled="true">
+<a href="{% url 'event_new' %}"{% if request.resolver_match.url_name == 'event_new' %} aria-current="page" class="dock-active"{% endif %}>
   <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
   <span class="dock-label">Create</span>
-</span>
+</a>
 <a href="{% url 'profile_edit' %}"{% if request.resolver_match.url_name == 'profile_edit' %} aria-current="page" class="dock-active"{% endif %}>
   <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
   <span class="dock-label">Profile</span>

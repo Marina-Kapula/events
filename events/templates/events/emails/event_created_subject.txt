@@ -1,0 +1,1 @@
+{% autoescape off %}New event to review: {{ event.title }}{% endautoescape %}

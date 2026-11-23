@@ -13,6 +13,7 @@
 /* Scan the templates explicitly, whatever the working dir. Each app adds its own line. */
 @source "../../templates";
 @source "../../accounts/templates";
+@source "../../events/templates";
 
 /* Forms rendered with {{ form }} have no classes on their inputs: style them here. */
 @layer components {

@@ -57,6 +57,7 @@ INSTALLED_APPS: list[str] = [
     "django_tailwind_cli",
     "django_countries",  # country list for the nationality field
     "accounts",  # users
+    "events",
 ]
 
 # Use our own User model instead of Django's built-in one.

@@ -1,0 +1,8 @@
+{% autoescape off %}{{ event.organizer.full_name }} sent a new event for review:
+
+{{ event.title }}
+{{ event.starts_at|date:"l j F Y, H:i" }} in {{ event.city }}, {{ event.place }}
+
+Approve or reject it in the admin:
+{{ site_url }}{% url "admin:events_event_change" event.pk %}
+{% endautoescape %}
