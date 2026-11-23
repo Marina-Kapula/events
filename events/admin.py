@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from accounts.models import User
 from config.photos import PhotoField
-from events.models import Event, EventChange
+from events.models import Comment, Event, EventChange
 from events.services import (
     event_approve,
     event_cancel,
@@ -106,3 +106,16 @@ class EventAdmin(admin.ModelAdmin[Event]):
             self.message_user(request, " ".join(error.messages), messages.ERROR)
         # Back to the same page, which now shows the new status.
         return HttpResponseRedirect(request.path)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin[Comment]):
+    """Staff can read and delete messages under events."""
+
+    list_display = ("text", "author", "event", "created_at")
+    search_fields = ("text", "author__email", "event__title")
+    readonly_fields = ("event", "author", "text", "created_at")
+
+    @override
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return False

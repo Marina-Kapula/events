@@ -131,7 +131,8 @@ def test_the_list_page_runs_a_fixed_number_of_queries(
     client.force_login(make_student())
 
     # The session, the logged-in user, and the events: however many events there are.
-    with django_assert_num_queries(3):
+    # Session, user, events, the people going, the bell.
+    with django_assert_num_queries(5):
         response = client.get("/")
 
     assert response.content.count(b"<article") == 3

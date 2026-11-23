@@ -1,14 +1,17 @@
+from datetime import datetime, timedelta
+
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from accounts.models import User
 from events import services
 from events.forms import EventFilterForm, EventForm
-from events.models import Event, EventChange, Participation, Size
+from events.models import Comment, Event, EventChange, Notification, Participation, Size
 from events.services import (
     event_create,
     event_update,
@@ -21,8 +24,9 @@ def event_list(request: HttpRequest) -> HttpResponse:
     form = EventFilterForm(request.GET)
     events = (
         Event.objects.listed(now=timezone.now())
-        .select_related("change")
+        .select_related("change", "organizer")
         .with_going_count()
+        .with_going_people()
     )
     if form.is_valid():
         data = form.cleaned_data
@@ -36,7 +40,16 @@ def event_list(request: HttpRequest) -> HttpResponse:
             events = events.of_type(data["type"])
         if data["size"]:
             events = events.of_size(Size(data["size"]))
-    return render(request, "events/event_list.html", {"form": form, "events": events})
+    return render(
+        request,
+        "events/event_list.html",
+        {"form": form, "events": events, "now": timezone.now(), "soon": _soon()},
+    )
+
+
+def _soon() -> datetime:
+    """Events starting before this get a "Starts in …" badge."""
+    return timezone.now() + timedelta(hours=24)
 
 
 def event_detail(request: HttpRequest, pk: int) -> HttpResponse:
@@ -64,6 +77,9 @@ def event_detail(request: HttpRequest, pk: int) -> HttpResponse:
             "is_open": event.status == Event.Status.APPROVED
             and event.starts_at > timezone.now(),
             "started": event.starts_at <= timezone.now(),
+            "comments": Comment.objects.filter(event=event).select_related("author"),
+            "can_comment": event.status
+            not in (Event.Status.CANCELLED, Event.Status.REJECTED),
         },
     )
 
@@ -73,13 +89,19 @@ def my_events(request: HttpRequest) -> HttpResponse:
     if not isinstance(user, User) or user.is_staff:
         raise Http404
     now = timezone.now()
-    events = Event.objects.with_going_count().select_related("change")
+    events = (
+        Event.objects.with_going_count()
+        .with_going_people()
+        .select_related("change", "organizer")
+    )
     return render(
         request,
         "events/my_events.html",
         {
             "created": events.organized_by(user).upcoming_first(now=now),
             "joined": events.joined_by(user).upcoming_first(now=now),
+            "now": now,
+            "soon": _soon(),
         },
     )
 
@@ -184,3 +206,36 @@ def event_cancel(request: HttpRequest, pk: int) -> HttpResponse:
             request, "Event cancelled. Everyone going or waiting was emailed."
         )
     return redirect("event_detail", pk=event.pk)
+
+
+@require_POST
+def comment_add(request: HttpRequest, pk: int) -> HttpResponse:
+    user = request.user
+    if not isinstance(user, User):
+        raise Http404
+    event = get_object_or_404(Event.objects.visible_to(user), pk=pk)
+    try:
+        services.comment_add(
+            event=event, author=user, text=request.POST.get("text", "")
+        )
+    except ValidationError as error:
+        messages.error(request, " ".join(error.messages))
+    return redirect(reverse("event_detail", args=[event.pk]) + "#comments")
+
+
+def notification_list(request: HttpRequest) -> HttpResponse:
+    user = request.user
+    if not isinstance(user, User):
+        raise Http404
+    notifications = list(
+        # Only events `user` may still open: the link must not lead to a 404.
+        Notification.objects.filter(
+            user=user, event__in=Event.objects.visible_to(user)
+        ).select_related("event", "actor")[:50]
+    )
+    services.notifications_mark_read(user=user, now=timezone.now())
+    return render(
+        request,
+        "events/notification_list.html",
+        {"notifications": notifications},
+    )

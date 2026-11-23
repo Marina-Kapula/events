@@ -114,7 +114,8 @@ def test_my_events_runs_the_same_queries_for_any_number_of_events(
     client.force_login(me)
 
     # The session, the user, then one query per list.
-    with django_assert_num_queries(4):
+    # + the people going for each list, + the bell.
+    with django_assert_num_queries(7):
         client.get(reverse("my_events"))
 
 

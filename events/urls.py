@@ -11,4 +11,6 @@ urlpatterns: list[URLPattern] = [
     path("events/<int:pk>/edit/", views.event_edit, name="event_edit"),
     path("events/<int:pk>/join/", views.event_join, name="event_join"),
     path("events/<int:pk>/leave/", views.event_leave, name="event_leave"),
+    path("events/<int:pk>/comments/", views.comment_add, name="comment_add"),
+    path("notifications/", views.notification_list, name="notifications"),
 ]

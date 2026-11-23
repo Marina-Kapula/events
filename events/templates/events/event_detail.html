@@ -97,5 +97,42 @@
       <p class="mt-2 text-sm opacity-70">Waiting: {{ waiting_count }}</p>
     </div>
   </article>
+
+  <section id="comments" aria-labelledby="comments-title" class="card mt-6 bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h2 id="comments-title" class="card-title">💬 Chat{% if comments %} ({{ comments|length }}){% endif %}</h2>
+      {% for comment in comments %}
+        {% with author=comment.author %}
+        <div class="chat {% if author == user %}chat-end{% else %}chat-start{% endif %}">
+          <div class="chat-image avatar{% if author.is_staff or author.deleted_at or not author.photo %} avatar-placeholder{% endif %}">
+            {% if author.is_staff %}
+              <div class="w-10 rounded-full bg-neutral text-xs text-neutral-content">AMFI</div>
+            {% elif author.deleted_at or not author.photo %}
+              <div class="w-10 rounded-full bg-base-300">?</div>
+            {% else %}
+              <div class="w-10 rounded-full"><img src="{{ author.photo.url }}" alt=""></div>
+            {% endif %}
+          </div>
+          <div class="chat-header">
+            {% if author.is_staff %}AMFI{% elif author.deleted_at %}Deleted student{% else %}{{ author.full_name }}{% endif %}
+            {% if author == event.organizer %}<span class="badge badge-ghost badge-xs">organizer</span>{% endif %}
+            <time class="text-xs opacity-50" datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|timesince }} ago</time>
+          </div>
+          <div class="chat-bubble{% if author == user %} chat-bubble-primary{% endif %}">{{ comment.text|linebreaksbr }}</div>
+        </div>
+        {% endwith %}
+      {% empty %}
+        <p class="opacity-70">No messages yet. Ask something, or say hi 👋</p>
+      {% endfor %}
+      {% if can_comment %}
+        <form method="post" action="{% url 'comment_add' event.pk %}" class="mt-4 flex items-end gap-2">
+          {% csrf_token %}
+          <label class="sr-only" for="comment-text">Your message</label>
+          <textarea id="comment-text" name="text" rows="1" maxlength="500" required class="textarea w-full" placeholder="Write a message…"></textarea>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      {% endif %}
+    </div>
+  </section>
 </main>
 {% endblock %}

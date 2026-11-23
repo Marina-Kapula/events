@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from datetime import datetime
 from functools import partial
 
@@ -6,7 +7,34 @@ from django.db import transaction
 
 from accounts.models import User
 from config.emails import send_email
-from events.models import Event, EventChange, Participation
+from events.models import Comment, Event, EventChange, Notification, Participation
+
+
+def _name(user: User) -> str:
+    return "AMFI" if user.is_staff else user.full_name
+
+
+def notify(
+    *, users: Iterable[User], event: Event, text: str, actor: User | None = None
+) -> None:
+    """Puts a line under each user's bell (our choice, not SPEC).
+
+    Only people on `event` get one: its organizer and whoever is going or waiting.
+
+    `actor` is who did it: their face goes next to the line.
+    """
+    if actor is not None and actor.is_staff:
+        actor = None
+    Notification.objects.bulk_create(
+        Notification(user=user, event=event, text=text[:200], actor=actor)
+        for user in {user.pk: user for user in users}.values()
+    )
+
+
+def _people_on(event: Event) -> list[User]:
+    return [
+        p.user for p in Participation.objects.filter(event=event).select_related("user")
+    ]
 
 
 def _email_staff(*, event: Event, template: str) -> None:
@@ -34,6 +62,11 @@ def event_approve(*, event: Event, now: datetime) -> None:
     event.status = Event.Status.APPROVED
     event.full_clean()
     event.save()
+    notify(
+        users=[event.organizer],
+        event=event,
+        text="Approved: it's live! 🎉",
+    )
     transaction.on_commit(
         lambda: send_email(
             to=[event.organizer.email],
@@ -52,6 +85,11 @@ def event_reject(*, event: Event, reason: str) -> None:
     event.review_note = reason.strip()
     event.full_clean()
     event.save()
+    notify(
+        users=[event.organizer],
+        event=event,
+        text="Not approved: see why.",
+    )
     transaction.on_commit(
         lambda: send_email(
             to=[event.organizer.email],
@@ -87,6 +125,11 @@ def participation_join(*, event: Event, user: User, now: datetime) -> Participat
         )
         participation.full_clean()
         participation.save()
+        if participation.status == Participation.Status.GOING:
+            text = f"{_name(user)} is going"
+        else:
+            text = f"{_name(user)} joined the waiting list"
+        notify(users=[event.organizer], event=event, text=text, actor=user)
     return participation
 
 
@@ -100,6 +143,12 @@ def participation_leave(*, event: Event, user: User, now: datetime) -> None:
             raise ValidationError("You are not on this event.")
         participation.delete()
         if participation.status == Participation.Status.GOING:
+            notify(
+                users=[event.organizer],
+                event=event,
+                text=f"{_name(user)} left",
+                actor=user,
+            )
             transaction.on_commit(
                 lambda: send_email(
                     to=[event.organizer.email],
@@ -126,6 +175,11 @@ def waiting_list_move_up(*, event: Event) -> None:
             participation.full_clean()
             participation.save()
             going += 1
+            notify(
+                users=[participation.user],
+                event=event,
+                text="A spot freed up: you're going!",
+            )
             # partial, not lambda: a lambda would see the loop's last participation.
             transaction.on_commit(
                 partial(
@@ -191,6 +245,12 @@ def event_change_approve(*, event: Event, now: datetime) -> None:
     event.full_clean()
     event.save()
     change.delete()
+    notify(
+        users=_people_on(event),
+        event=event,
+        text="The details changed: take a look.",
+        actor=event.organizer,
+    )
     waiting_list_move_up(event=event)
     transaction.on_commit(
         partial(
@@ -238,4 +298,33 @@ def event_cancel(*, event: Event, by: User, now: datetime) -> None:
     event.status = Event.Status.CANCELLED
     event.full_clean()
     event.save()
+    notify(
+        users=_people_on(event),
+        event=event,
+        text="Cancelled.",
+        actor=by,
+    )
     _email_everyone_on(event, template="events/emails/event_cancelled")
+
+
+@transaction.atomic
+def comment_add(*, event: Event, author: User, text: str) -> Comment:
+    """Posts a comment and rings the bell of everyone on the event but the author."""
+    if event.status in (Event.Status.CANCELLED, Event.Status.REJECTED):
+        raise ValidationError("You can't comment on this event.")
+    comment = Comment(event=event, author=author, text=text.strip())
+    comment.full_clean()
+    comment.save()
+    short = comment.text if len(comment.text) <= 60 else comment.text[:59] + "…"
+    others = [user for user in [event.organizer, *_people_on(event)] if user != author]
+    notify(
+        users=others,
+        event=event,
+        text=f"{_name(author)}: {short}",
+        actor=author,
+    )
+    return comment
+
+
+def notifications_mark_read(*, user: User, now: datetime) -> None:
+    Notification.objects.filter(user=user, read_at=None).update(read_at=now)

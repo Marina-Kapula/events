@@ -178,7 +178,7 @@ def test_the_list_shows_spots_taken_without_extra_queries(
         make_participation(event, status=Participation.Status.WAITING)
     client.force_login(make_student())
 
-    with django_assert_num_queries(3):
+    with django_assert_num_queries(5):
         response = client.get("/")
 
     assert response.content.count(b"2 / 8 spots") == 3

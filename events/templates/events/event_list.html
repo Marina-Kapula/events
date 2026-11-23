@@ -2,12 +2,10 @@
 
 {% block title %}Events · AMFI Meetups{% endblock %}
 
+{% block backdrop_shade %}rgb(0 0 0 / .25), rgb(0 0 0 / .7){% endblock %}
+
 {% block content %}
-{% load static %}
-<main id="main" class="isolate mx-auto max-w-5xl px-4 py-8">
-  {# The photo fills the screen and stays put; the page scrolls over it. #}
-  {# Photo: "Orange sunset celebration", Unsplash via Wikimedia Commons, CC0. #}
-  <div aria-hidden="true" class="fixed inset-0 -z-10 bg-neutral bg-cover bg-center" style="background-image: linear-gradient(to bottom, rgb(0 0 0 / .25), rgb(0 0 0 / .7)), url('{% static 'img/hero.jpg' %}')"></div>
+<main id="main" class="mx-auto max-w-5xl px-4 py-8">
 
   <section class="flex min-h-[45vh] flex-col justify-center py-10 text-white drop-shadow-lg">
     <h1 class="text-4xl font-bold sm:text-6xl">
@@ -35,9 +33,23 @@
   <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {% for event in events %}
       {% partialdef event_card inline %}
-      <article class="card bg-base-100 shadow-sm">
-        <figure class="aspect-video">
+      <article class="card min-w-0 flex-1 bg-base-100 shadow-sm">
+        <figure class="relative aspect-video">
           <img src="{{ event.photo.url }}" alt="" class="h-full w-full object-cover">
+          {% if event.status == "approved" and event.starts_at > now %}
+            {% with left=event.spots_left %}
+            <div class="absolute top-2 left-2 flex flex-wrap gap-1">
+              {% if left == 0 %}
+                <span class="badge border-0 bg-black/70 font-semibold text-white">Full · waiting list</span>
+              {% elif left <= 3 %}
+                <span class="badge badge-error font-semibold text-white">🔥 Only {{ left }} spot{{ left|pluralize }} left</span>
+              {% endif %}
+              {% if event.starts_at < soon %}
+                <span class="badge border-0 bg-black/70 font-semibold text-white">⏰ Starts in {{ event.starts_at|timeuntil }}</span>
+              {% endif %}
+            </div>
+            {% endwith %}
+          {% endif %}
         </figure>
         <div class="card-body gap-1 p-4">
           <div class="flex flex-wrap gap-1">
@@ -54,7 +66,27 @@
           <p class="text-sm opacity-70"><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"D j M Y · H:i" }}</time></p>
           <h2 class="card-title text-lg"><a href="{% url 'event_detail' event.pk %}" class="link-hover">{{ event.title }}</a></h2>
           <p class="text-sm">{{ event.city }} · {{ event.place }}</p>
-          <p class="text-sm opacity-70">{{ event.going_count|add:1 }} / {{ event.max_people }} spots</p>
+          <p class="text-sm opacity-70">by {% if event.organizer.is_staff %}AMFI{% elif event.organizer.deleted_at %}a deleted student{% else %}{{ event.organizer.full_name }}{% endif %}</p>
+          <div class="mt-2 flex w-full items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+            {% if event.going_people %}
+              <div class="avatar-group -space-x-3">
+                {% for participation in event.going_people|slice:":4" %}
+                  {% if participation.user.photo %}<div class="avatar"><div class="w-8"><img src="{{ participation.user.photo.url }}" alt=""></div></div>{% else %}<div class="avatar avatar-placeholder"><div class="w-8 bg-primary text-xs text-primary-content">{{ participation.user.full_name|slice:":1" }}</div></div>{% endif %}
+                {% endfor %}
+                {% if event.going_people|length > 4 %}
+                  <div class="avatar avatar-placeholder"><div class="w-8 bg-neutral text-xs text-neutral-content">+{{ event.going_people|length|add:"-4" }}</div></div>
+                {% endif %}
+              </div>
+              <p class="text-sm">{{ event.going_count }} going</p>
+            {% elif event.status == "pending" %}
+              <p class="text-sm opacity-70">Sign-ups open once approved</p>
+            {% elif event.status == "approved" and event.starts_at > now %}
+              <p class="text-sm opacity-70">Be the first to join!</p>
+            {% endif %}
+            </div>
+            <p class="flex-none text-sm opacity-70">{{ event.going_count|add:1 }} / {{ event.max_people }} spots</p>
+          </div>
         </div>
       </article>
       {% endpartialdef %}

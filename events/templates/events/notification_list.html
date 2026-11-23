@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications · AMFI Meetups{% endblock %}
+
+{% block content %}
+<main id="main" class="mx-auto max-w-2xl px-4 py-8">
+  <h1 class="text-2xl font-semibold">Notifications</h1>
+  <ul class="mt-4 divide-y divide-base-200 overflow-hidden rounded-box bg-base-100 shadow-sm">
+    {% for notification in notifications %}
+      {% with actor=notification.actor event=notification.event %}
+      <li>
+        <a href="{% url 'event_detail' event.pk %}" class="flex items-center gap-4 p-4 hover:bg-base-200{% if not notification.read_at %} bg-primary/10{% endif %}">
+          <div class="relative shrink-0">
+            {% if actor and actor.photo and not actor.deleted_at %}
+              <img src="{{ actor.photo.url }}" alt="" class="size-14 rounded-full object-cover">
+              <img src="{{ event.photo.url }}" alt="" class="absolute -right-1 -bottom-1 size-7 rounded-md border-2 border-base-100 object-cover">
+            {% else %}
+              <img src="{{ event.photo.url }}" alt="" class="size-14 rounded-box object-cover">
+            {% endif %}
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="flex flex-wrap items-center gap-x-2 text-sm">
+              <span class="truncate font-semibold">{{ event.title }}</span>
+              {% if event.organizer_id == user.pk %}<span class="badge badge-primary badge-xs">Your event</span>{% else %}<span class="badge badge-ghost badge-xs">You're going</span>{% endif %}
+            </p>
+            <p>{{ notification.text }}</p>
+            <p class="text-xs opacity-60"><time datetime="{{ notification.created_at|date:'c' }}">{{ notification.created_at|timesince }} ago</time></p>
+          </div>
+          {% if not notification.read_at %}<span class="size-2.5 shrink-0 rounded-full bg-error"><span class="sr-only">new</span></span>{% endif %}
+        </a>
+      </li>
+      {% endwith %}
+    {% empty %}
+      <li class="p-8 text-center opacity-70">Nothing yet. Join an event and you'll hear about it here 🔔</li>
+    {% endfor %}
+  </ul>
+</main>
+{% endblock %}

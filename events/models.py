@@ -2,9 +2,13 @@ from datetime import date, datetime
 from typing import Self, override
 
 from django.conf import settings
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    MaxLengthValidator,
+    MaxValueValidator,
+    MinValueValidator,
+)
 from django.db import models
-from django.db.models import Case, Count, Exists, OuterRef, Q, When
+from django.db.models import Case, Count, Exists, OuterRef, Prefetch, Q, When
 
 from accounts.models import User
 
@@ -79,6 +83,18 @@ class EventQuerySet(models.QuerySet["Event"]):
             )
         )
 
+    def with_going_people(self) -> Self:
+        """Adds `going_people`: the participations of people going, with the user."""
+        return self.prefetch_related(
+            Prefetch(
+                "participations",
+                queryset=Participation.objects.filter(
+                    status=Participation.Status.GOING
+                ).select_related("user"),
+                to_attr="going_people",
+            )
+        )
+
     def organized_by(self, user: User) -> Self:
         return self.filter(organizer=user)
 
@@ -140,6 +156,11 @@ class Event(EventFields):
     def __str__(self) -> str:
         return self.title
 
+    def spots_left(self) -> int:
+        """Free spots; needs `with_going_count`. The organizer takes one."""
+        going: int = getattr(self, "going_count", 0)
+        return max(self.max_people - 1 - going, 0)
+
 
 class EventChange(EventFields):
     """An organizer's edit of an approved event, waiting for AMFI (SPEC.md §2 #17)."""
@@ -180,3 +201,48 @@ class Participation(models.Model):
     @override
     def __str__(self) -> str:
         return f"{self.user} {self.status} {self.event}"
+
+
+class Comment(models.Model):
+    """A message under an event: who brings what, who's late (our choice, not SPEC)."""
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField(max_length=500, validators=[MaxLengthValidator(500)])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("created_at", "id")
+
+    @override
+    def __str__(self) -> str:
+        return f"{self.author} on {self.event}"
+
+
+class Notification(models.Model):
+    """One line under the bell: something new for `user` (our choice, not SPEC)."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+    )
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    # Whose face goes next to the line; none when it comes from AMFI.
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    text = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+
+    @override
+    def __str__(self) -> str:
+        return f"{self.user}: {self.text}"
