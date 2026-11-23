@@ -1,6 +1,6 @@
 # Demo data for development
 
-Status: todo · Opened: 2026-11-21 · Milestone: M3 · Depends on: 013, 014, 015
+Status: done · Opened: 2026-11-21 · Milestone: M3 · Depends on: 013, 014, 015
 
 ## Why
 
@@ -59,7 +59,7 @@ events/management/commands/seed_demo.py
 It goes in `events`: it creates users *and* events, and `events` may import `accounts`, not the
 other way round (SPEC.md §4).
 
-- [ ] The two packages exist.
+- [x] The two packages exist.
 
 ### 2. The command
 
@@ -249,7 +249,7 @@ Why each piece is there:
 - **`*args: object, **options: object`**: `options["reset"]` is `True` or `False`, but Django
   hands options over untyped; an `if` is all we do with it.
 
-- [ ] `seed_demo` as above.
+- [x] `seed_demo` as above.
 
 ### 3. Try it
 
@@ -278,7 +278,7 @@ sent. Keep it that way while you seed: the addresses are fake.
 
 Run it again: it stops and asks for `--reset`. `seed_demo --reset` makes everything fresh.
 
-- [ ] The command runs on an empty database and prints the logins; the pages show every state.
+- [x] The command runs on an empty database and prints the logins; the pages show every state.
 
 ### 4. Tests
 
@@ -343,19 +343,19 @@ def test_seed_demo_refuses_without_debug() -> None:
 - **`set(Event.Status)`** is every status there is: if someone adds a status later, this test
   reminds them to seed it too.
 
-- [ ] The tests above pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] `manage.py seed_demo` creates 8 students with photos, a demo admin, and events in every
+- [x] `manage.py seed_demo` creates 8 students with photos, a demo admin, and events in every
       status, with a full event and a waiting list, pending changes, and a past event (test).
-- [ ] Every event and sign-up that can be made through a service is (code review).
-- [ ] A second run stops unless `--reset` is given; `--reset` starts over (test).
-- [ ] With `DEBUG` off it refuses and creates nothing (test).
-- [ ] The README's "Development" section mentions `seed_demo` in one line.
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] Every event and sign-up that can be made through a service is (code review).
+- [x] A second run stops unless `--reset` is given; `--reset` starts over (test).
+- [x] With `DEBUG` off it refuses and creates nothing (test).
+- [x] The README's "Development" section mentions `seed_demo` in one line.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

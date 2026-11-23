@@ -23,6 +23,7 @@ uv run python manage.py createsuperuser     # your admin login
 ```sh
 uv run python manage.py tailwind runserver  # dev server on 127.0.0.1:8000 + Tailwind watcher
 uv run python manage.py tailwind build      # one-off stylesheet build
+uv run python manage.py seed_demo          # demo students and events (--reset to start over)
 ```
 
 The UI uses [daisyUI](https://daisyui.com/components/) components on Tailwind. The first
