@@ -1,11 +1,13 @@
 import itertools
 from collections.abc import Callable, Iterator
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
 from django.test import override_settings
+from django.utils import timezone
 
-from accounts.models import User
+from accounts.models import RegistrationWindow, User
 
 PASSWORD = "s3cret-pass"
 
@@ -81,3 +83,19 @@ def make_staff(db: None) -> Callable[..., User]:
 @pytest.fixture
 def admin_user(make_staff: Callable[..., User]) -> User:
     return make_staff()
+
+
+@pytest.fixture
+def make_window(make_staff: Callable[..., User]) -> Callable[..., RegistrationWindow]:
+    def make(**overrides: object) -> RegistrationWindow:
+        fields: dict[str, object] = {
+            "opened_by": make_staff(),
+            "expires_at": timezone.now() + timedelta(minutes=30),
+            **overrides,
+        }
+        window = RegistrationWindow(**fields)
+        window.full_clean()
+        window.save()
+        return window
+
+    return make
