@@ -13,3 +13,25 @@
 /* Scan the templates explicitly, whatever the working dir. Each app adds its own line. */
 @source "../../templates";
 @source "../../accounts/templates";
+
+/* Forms rendered with {{ form }} have no classes on their inputs: style them here. */
+@layer components {
+  .django-form input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]) {
+    @apply input w-full;
+  }
+  .django-form select {
+    @apply select w-full;
+  }
+  .django-form input[type="file"] {
+    @apply file-input w-full;
+  }
+  .django-form label {
+    @apply fieldset-legend;
+  }
+  .django-form .helptext {
+    @apply text-sm opacity-70;
+  }
+  .django-form .errorlist {
+    @apply text-error;
+  }
+}

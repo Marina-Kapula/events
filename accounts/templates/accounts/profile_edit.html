@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Your profile · AMFI Meetups{% endblock %}
+
+{% block content %}
+<main id="main" class="mx-auto max-w-md px-4 py-10">
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h1 class="card-title">Your profile</h1>
+      <form method="post" enctype="multipart/form-data" class="django-form grid gap-2">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="btn btn-primary mt-2">Save</button>
+      </form>
+      <p class="mt-2"><a href="{% url 'password_change' %}" class="link">Change your password</a></p>
+    </div>
+  </div>
+</main>
+{% endblock %}

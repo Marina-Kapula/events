@@ -1,6 +1,6 @@
 # Profiles, profile editing and passwords
 
-Status: todo · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002, 005, 006
+Status: done · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002, 005, 006
 
 ## Why
 
@@ -120,7 +120,7 @@ The template, `accounts/templates/accounts/student_detail.html`:
 
 Style it with your UI library (issue 003): a card with the photo is a good start.
 
-- [ ] A logged-in student sees another student's profile; a staff user's id gives a 404.
+- [x] A logged-in student sees another student's profile; a staff user's id gives a 404.
 
 ### 2. Edit your own profile
 
@@ -218,7 +218,7 @@ def profile_edit(request: HttpRequest) -> HttpResponse:
 
 `enctype="multipart/form-data"` is what lets the form send the photo.
 
-- [ ] A student edits their profile, with and without a new photo.
+- [x] A student edits their profile, with and without a new photo.
 
 ### 3. Photos uploaded in the admin
 
@@ -251,7 +251,7 @@ class UserAdmin(admin.ModelAdmin[User]):
 - In the admin the photo is optional (the model's `blank=True`, for staff). A student's photo
   can't really be removed there: the database constraint from issue 002 refuses it.
 
-- [ ] A big photo uploaded in the admin is stored at most 1024 px wide (test in step 7).
+- [x] A big photo uploaded in the admin is stored at most 1024 px wide (test in step 7).
 
 ### 4. The Profile link
 
@@ -267,7 +267,7 @@ added one):
 `aria-current="page"` tells screen readers (and your CSS) which page you're on, like the Events
 link does.
 
-- [ ] Students see "Profile"; staff don't.
+- [x] Students see "Profile"; staff don't.
 
 ### 5. Password change and reset: Django's views
 
@@ -341,7 +341,7 @@ ignoring upper and lower case. An unverified student (008) gets nothing: they ne
 verification email" instead. The page after the form says the same in every case, so nobody can
 use it to find out who is registered.
 
-- [ ] The six URLs resolve.
+- [x] The six URLs resolve.
 
 ### 6. The templates
 
@@ -423,8 +423,8 @@ On the login page, under the button:
 Try the whole reset by hand: `.env` writes emails to `var/mail/` instead of sending them; open the
 newest file and paste the link into your browser.
 
-- [ ] Every page uses your templates, not the admin's.
-- [ ] A password reset works end to end on your laptop.
+- [x] Every page uses your templates, not the admin's.
+- [x] A password reset works end to end on your laptop.
 
 ### 7. Tests
 
@@ -667,24 +667,24 @@ Things to notice:
 - **The admin test posts the whole change form**, like the browser does: every field of
   `UserAdmin.fields` that isn't read-only. A checkbox that is off is simply left out.
 
-- [ ] The tests pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] `/students/<id>/` shows an active student's profile to logged-in users; staff, unverified and
+- [x] `/students/<id>/` shows an active student's profile to logged-in users; staff, unverified and
   deleted students are a 404 (tests).
-- [ ] `/profile/` edits the student's own profile and keeps the photo unless a new one is uploaded;
+- [x] `/profile/` edits the student's own profile and keeps the photo unless a new one is uploaded;
   staff get a 404 (tests).
-- [ ] "Profile" is in the navigation for students only (tests).
-- [ ] A photo uploaded in the admin is shrunk like the students' own (test).
-- [ ] Password change works from the profile page (test).
-- [ ] "Forgot your password?" on the login page leads to an email whose link starts with
+- [x] "Profile" is in the navigation for students only (tests).
+- [x] A photo uploaded in the admin is shrunk like the students' own (test).
+- [x] Password change works from the profile page (test).
+- [x] "Forgot your password?" on the login page leads to an email whose link starts with
   `SITE_URL` and sets a new password; inactive and unknown emails get nothing, and the same page
   (tests).
-- [ ] Every password page uses your templates.
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] Every password page uses your templates.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 
