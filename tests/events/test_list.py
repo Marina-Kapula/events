@@ -14,18 +14,30 @@ pytestmark = pytest.mark.django_db
 NOW = datetime(2027, 3, 1, 12, 0, tzinfo=ZoneInfo("Europe/Rome"))
 
 
-def test_listed_is_approved_and_not_started_soonest_first(
+def test_listed_is_approved_or_pending_and_not_started_soonest_first(
     make_event: Callable[..., Event],
 ) -> None:
     make_event(title="Later", starts_at=NOW + timedelta(days=2))
     make_event(title="Sooner", starts_at=NOW + timedelta(days=1))
     make_event(title="Started", starts_at=NOW - timedelta(minutes=1))
-    for status in (Event.Status.PENDING, Event.Status.REJECTED, Event.Status.CANCELLED):
+    make_event(
+        title="Pending", starts_at=NOW + timedelta(days=3), status=Event.Status.PENDING
+    )
+    for status in (Event.Status.REJECTED, Event.Status.CANCELLED):
         make_event(starts_at=NOW + timedelta(days=1), status=status)
 
     listed = Event.objects.listed(now=NOW)
 
-    assert [event.title for event in listed] == ["Sooner", "Later"]
+    assert [event.title for event in listed] == ["Sooner", "Later", "Pending"]
+
+
+def test_a_pending_event_is_listed_as_not_approved_yet(
+    client: Client, make_student: Callable[..., User], make_event: Callable[..., Event]
+) -> None:
+    make_event(status=Event.Status.PENDING)
+    client.force_login(make_student())
+
+    assert b"Not approved yet" in client.get("/").content
 
 
 def test_search_looks_in_title_and_description(

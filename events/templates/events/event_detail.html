@@ -5,7 +5,7 @@
 {% block content %}
 <main id="main" class="mx-auto max-w-3xl px-4 py-8">
   {% if event.status == "pending" %}
-    <div role="status" class="alert alert-info mb-4">AMFI is reviewing this event. Only you can see it for now.</div>
+    <div role="status" class="alert alert-warning mb-4">Not approved yet: AMFI is reviewing this event.</div>
   {% elif event.status == "rejected" %}
     <div role="status" class="alert alert-error mb-4"><p>AMFI didn't approve this event. The reason: {{ event.review_note|linebreaksbr }}</p></div>
   {% elif event.status == "cancelled" %}

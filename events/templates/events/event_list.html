@@ -35,6 +35,8 @@
             <span class="badge badge-ghost badge-sm">{{ event.language }}</span>
             {% if event.change %}
               <span class="badge badge-info badge-sm">Changes pending</span>
+            {% elif event.status == "pending" %}
+              <span class="badge badge-warning badge-sm">Not approved yet</span>
             {% elif event.status != "approved" %}
               <span class="badge badge-warning badge-sm">{{ event.get_status_display }}</span>
             {% endif %}

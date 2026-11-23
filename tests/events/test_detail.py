@@ -23,10 +23,20 @@ def test_an_approved_event_is_visible_to_everyone(
     assert event.organizer.full_name.encode() in response.content
 
 
-@pytest.mark.parametrize(
-    "status", [Event.Status.PENDING, Event.Status.REJECTED, Event.Status.CANCELLED]
-)
-def test_only_the_organizer_sees_an_event_that_is_not_approved(
+def test_everyone_sees_a_pending_event(
+    client: Client, make_student: Callable[..., User], make_event: Callable[..., Event]
+) -> None:
+    event = make_event(status=Event.Status.PENDING)
+    client.force_login(make_student())
+
+    response = client.get(f"/events/{event.pk}/")
+
+    assert response.status_code == 200
+    assert b"Not approved yet" in response.content
+
+
+@pytest.mark.parametrize("status", [Event.Status.REJECTED, Event.Status.CANCELLED])
+def test_only_the_organizer_sees_a_rejected_or_cancelled_event(
     client: Client,
     make_student: Callable[..., User],
     make_event: Callable[..., Event],

@@ -67,13 +67,19 @@ def test_staff_get_a_404(
     assert client.post(f"/events/{event.pk}/{action}/").status_code == 404
 
 
-def test_someone_elses_pending_event_is_a_404(
+def test_a_pending_event_cannot_be_joined(
     client: Client, make_student: Callable[..., User], make_event: Callable[..., Event]
 ) -> None:
     event = make_event(status=Event.Status.PENDING)
     client.force_login(make_student())
 
-    assert client.post(f"/events/{event.pk}/join/").status_code == 404
+    response = client.post(f"/events/{event.pk}/join/", follow=True)
+
+    assert b"not open for sign-ups" in response.content
+    assert not event.participations.exists()
+
+    other = make_event(status=Event.Status.REJECTED)
+    assert client.post(f"/events/{other.pk}/join/").status_code == 404
 
 
 @pytest.mark.parametrize(

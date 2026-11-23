@@ -53,16 +53,19 @@ class Size(models.TextChoices):
 
 class EventQuerySet(models.QuerySet["Event"]):
     def listed(self, *, now: datetime) -> Self:
-        """The event list: approved, not started yet, soonest first."""
-        return self.filter(status=Event.Status.APPROVED, starts_at__gt=now).order_by(
-            "starts_at"
-        )
+        """The event list: approved or pending, not started yet, soonest first.
+
+        Pending events are listed too, marked "Not approved yet" (our choice, not SPEC).
+        """
+        return self.filter(
+            status__in=(Event.Status.APPROVED, Event.Status.PENDING), starts_at__gt=now
+        ).order_by("starts_at")
 
     def visible_to(self, user: User) -> Self:
         """The events whose page `user` may open (SPEC §6.3)."""
         is_on_it = Exists(Participation.objects.filter(event=OuterRef("pk"), user=user))
         return self.filter(
-            Q(status=Event.Status.APPROVED)
+            Q(status__in=(Event.Status.APPROVED, Event.Status.PENDING))
             | Q(organizer=user)
             | (Q(status=Event.Status.CANCELLED) & is_on_it)
         )
