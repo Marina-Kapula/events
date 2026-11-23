@@ -33,6 +33,7 @@
         <input type="hidden" name="next" value="{{ next }}">
         <button type="submit" class="btn btn-primary mt-2">Log in</button>
         <p class="mt-2 text-center"><a href="{% url 'password_reset' %}" class="link">Forgot your password?</a></p>
+        <p class="text-center"><a href="{% url 'resend_verification' %}" class="link">Resend the verification email</a></p>
       </div>
     </form>
   </div>

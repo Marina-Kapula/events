@@ -1,0 +1,9 @@
+{% autoescape off %}Hello {{ user.full_name }},
+
+Welcome to AMFI Meetups! Open this link to confirm your email and activate your
+account:
+
+{{ site_url }}{% url 'verify' uidb64=uid token=token %}
+
+The link works once, for 3 days. If you didn't register, ignore this email.
+{% endautoescape %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}This link doesn't work · AMFI Meetups{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<main id="main" class="flex min-h-screen items-center justify-center px-4 py-10">
+  <div class="card w-full max-w-sm bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h1 class="card-title">This link doesn't work</h1>
+      <p>It was already used, or it is too old.</p>
+      <div class="card-actions mt-2">
+        <a href="{% url 'login' %}" class="btn btn-primary">Log in</a>
+        <a href="{% url 'resend_verification' %}" class="btn btn-ghost">Get a new link</a>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

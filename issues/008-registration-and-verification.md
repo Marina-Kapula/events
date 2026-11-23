@@ -1,6 +1,6 @@
 # Register with the QR code and verify the email
 
-Status: todo · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002, 005, 006, 007, 009
+Status: done · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002, 005, 006, 007, 009
 
 ## Why
 
@@ -139,7 +139,7 @@ Why it looks like this:
   result as safe, so the links show as links. The arguments here are our own URLs. Never put
   anything a user typed into the first string (the format).
 
-- [ ] The forms are in `accounts/forms.py`.
+- [x] The forms are in `accounts/forms.py`.
 
 ### 2. The services
 
@@ -262,7 +262,7 @@ The link works once, for 3 days. If you didn't register, ignore this email.
 - **The subject is one line.** An email subject can't contain a line break: Django 6.1 refuses
   it with a `ValueError`.
 
-- [ ] `accounts/services.py` and the two email templates exist.
+- [x] `accounts/services.py` and the two email templates exist.
 
 ### 3. The views and their URLs
 
@@ -368,7 +368,7 @@ urlpatterns: list[URLPattern] = [
 Django tries the patterns in order and takes the first match. `<str:code>` matches any word,
 `sent` included, so `register/sent/` must come first.
 
-- [ ] The four views are public (`@login_not_required`) and wired to their URLs.
+- [x] The four views are public (`@login_not_required`) and wired to their URLs.
 
 ### 4. The templates
 
@@ -413,7 +413,7 @@ On the login page (`templates/registration/login.html`), under the button:
 <p><a href="{% url 'resend_verification' %}">Resend the verification email</a></p>
 ```
 
-- [ ] Every page works in a private browser window, without logging in.
+- [x] Every page works in a private browser window, without logging in.
 
 ### 5. Try it end to end
 
@@ -428,7 +428,7 @@ sent. Then:
 
 Then do it on your phone, as in issue 007 step 6: check that the photo field opens the camera.
 
-- [ ] The whole flow works on a laptop and on a phone.
+- [x] The whole flow works on a laptop and on a phone.
 
 ### 6. Tests
 
@@ -727,8 +727,8 @@ Things to notice:
 - Each rule of §6.1 has its test, including the forbidden cases: a closed window, a used link, a
   deleted student, a broken link, an email that is already registered.
 
-- [ ] The tests pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests pass.
+- [x] `scripts/check.sh` passes.
 
 ### 7. A note for the next developer
 
@@ -737,21 +737,21 @@ How the verification link works is hard to guess from the code. Write it down in
 single use, what makes it expire, why the resend page always says the same), and add it to
 `docs/index.md` (AGENTS.md, Notetaking).
 
-- [ ] The note exists and the index links to it.
+- [x] The note exists and the index links to it.
 
 ## Done when
 
-- [ ] A student registers on `/register/<code>/` with every profile field and a photo, and gets an
+- [x] A student registers on `/register/<code>/` with every profile field and a photo, and gets an
   email with a link; the account stays inactive until the link is clicked (tests).
-- [ ] The window is checked again when the form is sent (test).
-- [ ] The link activates the account and logs in, once; a used, broken or old link, or a deleted
+- [x] The window is checked again when the form is sent (test).
+- [x] The link activates the account and logs in, once; a used, broken or old link, or a deleted
   student's link, shows "This link doesn't work" with a way to get a new one (tests).
-- [ ] An email that is already registered shows the error with its three links (test).
-- [ ] The resend page answers the same for every email, and only emails inactive, not deleted
+- [x] An email that is already registered shows the error with its three links (test).
+- [x] The resend page answers the same for every email, and only emails inactive, not deleted
   students (tests). The login page links to it.
-- [ ] On a phone, the photo field opens the camera.
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] On a phone, the photo field opens the camera.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

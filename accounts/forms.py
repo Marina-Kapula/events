@@ -1,7 +1,10 @@
 from typing import Any, override
 
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
+from django.core.exceptions import ValidationError
+from django.urls import reverse
+from django.utils.html import format_html
 
 from accounts.models import User
 from config.photos import PhotoField
@@ -29,3 +32,44 @@ class ProfileForm(forms.ModelForm[User]):
         # The model allows them blank for staff; a student fills in every field.
         for name in ("nationality", "age", "gender"):
             self.fields[name].required = True
+
+
+class RegistrationForm(BaseUserCreationForm[User]):
+    # On a phone, the photo field opens the front camera.
+    photo = PhotoField(widget=forms.FileInput(attrs={"capture": "user"}))
+
+    class Meta(BaseUserCreationForm.Meta):
+        model = User
+        fields = ("full_name", "email", "photo", "nationality", "age", "gender")
+
+    @override
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # The model allows them blank for staff; a student fills in every field.
+        for name in ("nationality", "age", "gender"):
+            self.fields[name].required = True
+
+    def clean_email(self) -> str:
+        email: str = self.cleaned_data["email"].lower()
+        if User.objects.filter(email=email).exists():
+            raise ValidationError(
+                format_html(
+                    "This email is already registered. "
+                    '<a href="{}">Log in</a>, <a href="{}">reset your password</a> '
+                    'or <a href="{}">resend the verification email</a>, '
+                    "or ask the AMFI staff.",
+                    reverse("login"),
+                    reverse("password_reset"),
+                    reverse("resend_verification"),
+                ),
+                code="registered",
+            )
+        return email
+
+
+class ResendVerificationForm(forms.Form):
+    email = forms.EmailField()
+
+    def clean_email(self) -> str:
+        email: str = self.cleaned_data["email"]
+        return email.lower()

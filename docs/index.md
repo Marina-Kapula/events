@@ -51,6 +51,11 @@ Do each once and watch what happens, with real output to compare; each issue say
 - [Backups](deployment/backups.md): pull a copy of the database with `scripts/pull-backup.sh`,
   restore it.
 
+## Accounts
+
+- [Email verification links](accounts/email-verification.md): the token, why it works once and
+  expires, why the resend page always answers the same.
+
 ## Typing
 
 - [Custom QuerySets and pyrefly](typing/custom-querysets.md): the one-line `objects` declaration

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Resend the verification email · AMFI Meetups{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
+<main id="main" class="flex min-h-screen items-center justify-center px-4 py-10">
+  <div class="card w-full max-w-sm bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h1 class="card-title">Resend the verification email</h1>
+      <form method="post" class="django-form grid gap-2">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="btn btn-primary mt-2">Send the link</button>
+      </form>
+      <p class="mt-2"><a href="{% url 'login' %}" class="link">Back to log in</a></p>
+    </div>
+  </div>
+</main>
+{% endblock %}

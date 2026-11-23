@@ -111,7 +111,7 @@ def test_register_page_is_public_while_the_window_is_open(
     response = client.get(reverse("register", args=(window.code,)))
 
     assert response.status_code == 200
-    assert b"Registration is open" in response.content
+    assert b'name="password1"' in response.content
 
 
 @pytest.mark.parametrize(
