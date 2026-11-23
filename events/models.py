@@ -1,8 +1,12 @@
-from typing import override
+from datetime import date, datetime
+from typing import Self, override
 
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Q
+
+from accounts.models import User
 
 
 class EventFields(models.Model):
@@ -34,8 +38,46 @@ class EventFields(models.Model):
         abstract = True
 
 
+class Size(models.TextChoices):
+    """The size filter of the event list (SPEC §2 #29)."""
+
+    SMALL = "small", "Up to 5 people"
+    MEDIUM = "medium", "6 to 10 people"
+    LARGE = "large", "More than 10 people"
+
+
 class EventQuerySet(models.QuerySet["Event"]):
-    """Reads of events. Issue 012 adds the event list's methods here."""
+    def listed(self, *, now: datetime) -> Self:
+        """The event list: approved, not started yet, soonest first."""
+        return self.filter(status=Event.Status.APPROVED, starts_at__gt=now).order_by(
+            "starts_at"
+        )
+
+    def visible_to(self, user: User) -> Self:
+        """The events whose page `user` may open (SPEC §6.3)."""
+        return self.filter(Q(status=Event.Status.APPROVED) | Q(organizer=user))
+
+    def search(self, text: str) -> Self:
+        return self.filter(Q(title__icontains=text) | Q(description__icontains=text))
+
+    def in_city(self, text: str) -> Self:
+        return self.filter(city__icontains=text)
+
+    def on_date(self, *, day: date) -> Self:
+        # The day in the site's time zone (Europe/Rome), not in UTC.
+        return self.filter(starts_at__date=day)
+
+    def of_type(self, event_type: str) -> Self:
+        return self.filter(type=event_type)
+
+    def of_size(self, size: Size) -> Self:
+        match size:
+            case Size.SMALL:
+                return self.filter(max_people__lte=5)
+            case Size.MEDIUM:
+                return self.filter(max_people__range=(6, 10))
+            case Size.LARGE:
+                return self.filter(max_people__gt=10)
 
 
 class Event(EventFields):

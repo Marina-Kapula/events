@@ -1,6 +1,6 @@
 # The event list with filters, and the event page
 
-Status: todo · Opened: 2026-11-21 · Milestone: M2 · Depends on: 009, 010
+Status: done · Opened: 2026-11-21 · Milestone: M2 · Depends on: 009, 010
 
 ## Why
 
@@ -135,7 +135,7 @@ class EventQuerySet(models.QuerySet["Event"]):
 
 `Size` is not a model field, so there is no migration.
 
-- [ ] The methods above, each with a test (step 6).
+- [x] The methods above, each with a test (step 6).
 
 ### 2. The filter form
 
@@ -160,7 +160,7 @@ A plain `forms.Form`, not a `ModelForm`: it saves nothing. Every field is option
 one means "don't filter on it". Django still does the boring part: it turns `"2027-03-05"` into
 a `date`, and refuses a size that isn't one of the three.
 
-- [ ] `EventFilterForm` as above.
+- [x] `EventFilterForm` as above.
 
 ### 3. The views
 
@@ -235,7 +235,7 @@ the `home` view in `config/views.py` (and the imports only it used), and `templa
 The login redirect (`LOGIN_REDIRECT_URL = "/"`) and the "Events" link in the navigation now
 lead to the list.
 
-- [ ] `/` is the event list, `/events/<id>/` the event page; the placeholder is gone.
+- [x] `/` is the event list, `/events/<id>/` the event page; the placeholder is gone.
 
 ### 4. The templates
 
@@ -334,7 +334,7 @@ Only the organizer ever sees a pending or rejected event (`visible_to`), so the 
 need no "is this the organizer?" check. `linebreaksbr` keeps the organizer's line breaks; it
 escapes the text first, so it is safe on user input (unlike `|safe`).
 
-- [ ] The list shows cards and filters; the page shows the details and the organizer.
+- [x] The list shows cards and filters; the page shows the details and the organizer.
 
 ### 5. One smoke test changes
 
@@ -582,23 +582,23 @@ def test_a_deleted_organizer_is_shown_as_deleted_student(
     assert b"Gone Student" not in response.content
 ```
 
-- [ ] The tests above pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] `/` lists approved events that haven't started, soonest first; pending, rejected, cancelled
+- [x] `/` lists approved events that haven't started, soonest first; pending, rejected, cancelled
       and started ones are not there (test).
-- [ ] Keyword, city, date, type and size each filter the list (a test each); a wrong value shows
+- [x] Keyword, city, date, type and size each filter the list (a test each); a wrong value shows
       an error instead of a crash (test).
-- [ ] The list page runs 3 queries, however many events there are (test).
-- [ ] The event page: approved events for every logged-in user; pending, rejected and cancelled
+- [x] The list page runs 3 queries, however many events there are (test).
+- [x] The event page: approved events for every logged-in user; pending, rejected and cancelled
       ones for their organizer only, with the reason when rejected; 404 otherwise (tests).
-- [ ] The organizer shows as "AMFI" for staff and "Deleted student" after a soft delete (tests).
-- [ ] The card is the `event_card` partial in `events/event_list.html`.
-- [ ] The placeholder `home` view and `templates/home.html` are gone.
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] The organizer shows as "AMFI" for staff and "Deleted student" after a soft delete (tests).
+- [x] The card is the `event_card` partial in `events/event_list.html`.
+- [x] The placeholder `home` view and `templates/home.html` are gone.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

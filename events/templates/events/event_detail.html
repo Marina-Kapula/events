@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} · AMFI Meetups{% endblock %}
+
+{% block content %}
+<main id="main" class="mx-auto max-w-3xl px-4 py-8">
+  {% if event.status == "pending" %}
+    <div role="status" class="alert alert-info mb-4">AMFI is reviewing this event. Only you can see it for now.</div>
+  {% elif event.status == "rejected" %}
+    <div role="status" class="alert alert-error mb-4"><p>AMFI didn't approve this event. The reason: {{ event.review_note|linebreaksbr }}</p></div>
+  {% elif event.status == "cancelled" %}
+    <div role="status" class="alert alert-warning mb-4">This event was cancelled.</div>
+  {% endif %}
+
+  <article class="card bg-base-100 shadow-sm">
+    <figure class="aspect-video">
+      <img src="{{ event.photo.url }}" alt="" class="h-full w-full object-cover">
+    </figure>
+    <div class="card-body">
+      <div class="flex flex-wrap gap-1">
+        <span class="badge badge-primary">{{ event.get_type_display }}</span>
+        <span class="badge badge-ghost">We will speak {{ event.language }}</span>
+      </div>
+      <h1 class="card-title text-2xl">{{ event.title }}</h1>
+      <p><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"l j F Y, H:i" }}</time></p>
+      <p>{{ event.city }} · {{ event.place }}</p>
+      <p class="mt-2">{{ event.description|linebreaksbr }}</p>
+
+      <h2 class="mt-4 text-lg font-semibold">Going (1 of {{ event.max_people }})</h2>
+      <ul class="mt-2">
+        <li class="flex items-center gap-3">
+          {% if event.organizer.is_staff %}
+            <span class="font-medium">AMFI</span>
+          {% elif event.organizer.deleted_at %}
+            <span class="opacity-70">Deleted student</span>
+          {% else %}
+            <a href="{% url 'student_detail' event.organizer.pk %}" class="flex items-center gap-3 link-hover">
+              <img src="{{ event.organizer.photo.url }}" alt="" width="48" height="48" class="size-12 rounded-full object-cover">
+              {{ event.organizer.full_name }}
+            </a>
+          {% endif %}
+          <span class="badge badge-ghost badge-sm">organizer</span>
+        </li>
+      </ul>
+    </div>
+  </article>
+</main>
+{% endblock %}

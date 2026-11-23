@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Events · AMFI Meetups{% endblock %}
+
+{% block content %}
+<main id="main" class="mx-auto max-w-5xl px-4 py-8">
+  <h1 class="text-2xl font-semibold">Events</h1>
+
+  <form method="get" role="search" class="django-form card mt-4 bg-base-100 shadow-sm">
+    <div class="card-body grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      {% for field in form %}
+        <div>
+          {{ field.label_tag }}
+          {{ field }}
+          {{ field.errors }}
+        </div>
+      {% endfor %}
+      <div class="flex gap-2 sm:col-span-2 lg:col-span-5">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{% url 'home' %}" class="btn btn-ghost">Clear</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for event in events %}
+      {% partialdef event_card inline %}
+      <article class="card bg-base-100 shadow-sm">
+        <figure class="aspect-video">
+          <img src="{{ event.photo.url }}" alt="" class="h-full w-full object-cover">
+        </figure>
+        <div class="card-body gap-1 p-4">
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-primary badge-sm">{{ event.get_type_display }}</span>
+            <span class="badge badge-ghost badge-sm">{{ event.language }}</span>
+            {% if event.status != "approved" %}<span class="badge badge-warning badge-sm">{{ event.get_status_display }}</span>{% endif %}
+          </div>
+          <p class="text-sm opacity-70"><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"D j M Y · H:i" }}</time></p>
+          <h2 class="card-title text-lg"><a href="{% url 'event_detail' event.pk %}" class="link-hover">{{ event.title }}</a></h2>
+          <p class="text-sm">{{ event.city }} · {{ event.place }}</p>
+          <p class="text-sm opacity-70">Up to {{ event.max_people }} people</p>
+        </div>
+      </article>
+      {% endpartialdef %}
+    {% empty %}
+      <div class="card bg-base-100 shadow-sm sm:col-span-2 lg:col-span-3">
+        <div class="card-body items-center py-16 text-center">
+          <h2 class="card-title">No events match</h2>
+          <p class="opacity-70">Try fewer filters, or create one!</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</main>
+{% endblock %}

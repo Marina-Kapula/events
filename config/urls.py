@@ -13,7 +13,6 @@ admin.site.site_header = "AMFI Meetups"
 admin.site.unregister(Group)
 
 urlpatterns: list[URLPattern | URLResolver] = [
-    path("", views.home, name="home"),
     path(
         "accounts/login/",
         auth_views.LoginView.as_view(authentication_form=EmailAuthenticationForm),
