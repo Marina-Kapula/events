@@ -1,10 +1,11 @@
 from datetime import timedelta
-from typing import override
+from typing import ClassVar, override
 
 import segno
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.db import models
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import reverse
@@ -12,6 +13,7 @@ from django.utils import timezone
 from django.utils.safestring import SafeString, mark_safe
 
 from accounts.models import RegistrationWindow, User
+from config.photos import PhotoField
 
 
 @admin.register(User)
@@ -41,6 +43,8 @@ class UserAdmin(admin.ModelAdmin[User]):
         "deleted_at",
     )
     readonly_fields = ("registration_window", "date_joined", "deleted_at")
+    # Photos uploaded here are checked and shrunk like the students' own (SPEC.md §6.8).
+    formfield_overrides: ClassVar = {models.ImageField: {"form_class": PhotoField}}
 
     @override
     def has_add_permission(self, request: HttpRequest) -> bool:
