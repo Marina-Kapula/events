@@ -1,6 +1,6 @@
 # Deploy your copy to your own VPS
 
-Status: todo · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002
+Status: done · Opened: 2026-11-21 · Milestone: M1 · Depends on: 002
 
 ## Why
 

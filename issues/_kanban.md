@@ -1,10 +1,5 @@
 # todo
 
-- [002-custom-user-model.md](002-custom-user-model.md)
-- [003-choose-a-ui-library.md](003-choose-a-ui-library.md)
-- [004-first-deploy.md](004-first-deploy.md)
-- [005-email-with-brevo.md](005-email-with-brevo.md)
-- [006-photos.md](006-photos.md)
 - [007-registration-windows.md](007-registration-windows.md)
 - [009-profiles-and-passwords.md](009-profiles-and-passwords.md)
 - [008-registration-and-verification.md](008-registration-and-verification.md)
@@ -21,17 +16,14 @@
 
 # on-progress
 
-- [004-first-deploy.md](004-first-deploy.md)
-- [005-email-with-brevo.md](005-email-with-brevo.md)
-
+- [004-first-deploy.md](004-first-deploy.md) ждёт подтверждения заказа OVH
+- [005-email-with-brevo.md](005-email-with-brevo.md) осталось только: шаг 6 (письмо с сервера, после 004)
 
 # done
 
 - [001-project-skeleton.md](001-project-skeleton.md)
 - [002-custom-user-model.md](002-custom-user-model.md)
 - [003-choose-a-ui-library.md](003-choose-a-ui-library.md)
-
-- [005-email-with-brevo.md](005-email-with-brevo.md) почти готово
 - [006-photos.md](006-photos.md)
 
 # backlog
