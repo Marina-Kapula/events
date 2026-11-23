@@ -41,8 +41,7 @@
 {% partialdef nav_top %}
 <li><a href="{% url 'home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page" class="menu-active"{% endif %}>Events</a></li>
 {% if not user.is_staff %}
-{# My events comes in issue 016. #}
-<li class="menu-disabled"><span aria-disabled="true">My events</span></li>
+<li><a href="{% url 'my_events' %}"{% if request.resolver_match.url_name == 'my_events' %} aria-current="page" class="menu-active"{% endif %}>My events</a></li>
 <li><a href="{% url 'profile_edit' %}"{% if request.resolver_match.url_name == 'profile_edit' %} aria-current="page" class="menu-active"{% endif %}>Profile</a></li>
 {% endif %}
 {% endpartialdef %}
@@ -53,11 +52,10 @@
   <span class="dock-label">Events</span>
 </a>
 {% if not user.is_staff %}
-{# My events comes in issue 016. #}
-<span class="opacity-40" aria-disabled="true">
+<a href="{% url 'my_events' %}"{% if request.resolver_match.url_name == 'my_events' %} aria-current="page" class="dock-active"{% endif %}>
   <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>
   <span class="dock-label">My events</span>
-</span>
+</a>
 <a href="{% url 'event_new' %}"{% if request.resolver_match.url_name == 'event_new' %} aria-current="page" class="dock-active"{% endif %}>
   <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
   <span class="dock-label">Create</span>

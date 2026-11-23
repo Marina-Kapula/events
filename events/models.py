@@ -4,7 +4,7 @@ from typing import Self, override
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models import Case, Count, Exists, OuterRef, Q, When
 
 from accounts.models import User
 
@@ -75,6 +75,21 @@ class EventQuerySet(models.QuerySet["Event"]):
                 filter=Q(participations__status=Participation.Status.GOING),
             )
         )
+
+    def organized_by(self, user: User) -> Self:
+        return self.filter(organizer=user)
+
+    def joined_by(self, user: User) -> Self:
+        """Events `user` is going to or waiting for; `waiting` says which."""
+        mine = Participation.objects.filter(event=OuterRef("pk"), user=user)
+        return self.filter(Exists(mine)).annotate(
+            waiting=Exists(mine.filter(status=Participation.Status.WAITING))
+        )
+
+    def upcoming_first(self, *, now: datetime) -> Self:
+        """Upcoming events first, then the past and cancelled ones; by start."""
+        upcoming = Q(starts_at__gt=now) & ~Q(status=Event.Status.CANCELLED)
+        return self.order_by(Case(When(upcoming, then=0), default=1), "starts_at")
 
     def search(self, text: str) -> Self:
         return self.filter(Q(title__icontains=text) | Q(description__icontains=text))

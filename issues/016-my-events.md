@@ -1,6 +1,6 @@
 # My events
 
-Status: todo · Opened: 2026-11-21 · Milestone: M2 · Depends on: 013, 015
+Status: done · Opened: 2026-11-21 · Milestone: M2 · Depends on: 013, 015
 
 ## Why
 
@@ -90,7 +90,7 @@ Why each piece is there:
   past and cancelled ones.
 - **`now` is an argument** (AGENTS.md, Layers): tests pass a fixed time.
 
-- [ ] The three methods.
+- [x] The three methods.
 
 ### 2. The view
 
@@ -126,7 +126,7 @@ path("my-events/", views.my_events, name="my_events"),
 - **Nothing runs until the template loops.** `events` is only a recipe; each list adds its own
   filter and order, and the database runs one query per list.
 
-- [ ] `my_events` and its URL.
+- [x] `my_events` and its URL.
 
 ### 3. The template
 
@@ -177,7 +177,7 @@ path("my-events/", views.my_events, name="my_events"),
 - **`{% empty %}`** gives each list a friendly line, with a link to what to do next.
 - **Two `<section>`s with headings**: screen-reader users can jump between them.
 
-- [ ] The page shows both lists with cards, badges, the reason and the waiting line.
+- [x] The page shows both lists with cards, badges, the reason and the waiting line.
 
 ### 4. The navigation link
 
@@ -193,7 +193,7 @@ phones), after "Events", for students only (§7):
 `aria-current="page"` marks the link of the page you are on, as for "Events"; add your UI
 library's "active" class next to it, as 003 did.
 
-- [ ] Students see "My events" in the navigation; staff don't.
+- [x] Students see "My events" in the navigation; staff don't.
 
 ### 5. Tests
 
@@ -342,20 +342,20 @@ def test_students_see_the_link_and_staff_get_a_404(
   something on the card without loading it in the view. Try it: remove `with_going_count()` and
   run the test.
 
-- [ ] The tests above pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] `/my-events/` lists the student's own events in every state, with the badge, and the reason
+- [x] `/my-events/` lists the student's own events in every state, with the badge, and the reason
       for rejected ones (test).
-- [ ] It lists the events they joined, going or waiting, upcoming first, then past and cancelled;
+- [x] It lists the events they joined, going or waiting, upcoming first, then past and cancelled;
       waiting ones say so (test).
-- [ ] Cards are the list's `event_card` partial, with the right spots (test).
-- [ ] The page runs 4 queries, however many events there are (test).
-- [ ] Students have a "My events" link; staff have no link and get a 404 (test).
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] Cards are the list's `event_card` partial, with the right spots (test).
+- [x] The page runs 4 queries, however many events there are (test).
+- [x] Students have a "My events" link; staff have no link and get a 404 (test).
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

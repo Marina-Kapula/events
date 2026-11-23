@@ -68,6 +68,22 @@ def event_detail(request: HttpRequest, pk: int) -> HttpResponse:
     )
 
 
+def my_events(request: HttpRequest) -> HttpResponse:
+    user = request.user
+    if not isinstance(user, User) or user.is_staff:
+        raise Http404
+    now = timezone.now()
+    events = Event.objects.with_going_count().select_related("change")
+    return render(
+        request,
+        "events/my_events.html",
+        {
+            "created": events.organized_by(user).upcoming_first(now=now),
+            "joined": events.joined_by(user).upcoming_first(now=now),
+        },
+    )
+
+
 def event_new(request: HttpRequest) -> HttpResponse:
     user = request.user
     if not isinstance(user, User) or user.is_staff:
