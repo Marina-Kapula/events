@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_not_required
 from django.contrib.auth.models import Group
-from django.urls import URLPattern, URLResolver, path
+from django.urls import URLPattern, URLResolver, include, path
 
 from accounts.forms import EmailAuthenticationForm
 from config import views
@@ -25,5 +25,6 @@ urlpatterns: list[URLPattern | URLResolver] = [
         name="logout",
     ),
     path("admin/", admin.site.urls),
+    path("", include("accounts.urls")),
     path("media/<path:path>", views.media, name="media"),
 ]

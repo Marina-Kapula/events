@@ -12,3 +12,4 @@
 
 /* Scan the templates explicitly, whatever the working dir. Each app adds its own line. */
 @source "../../templates";
+@source "../../accounts/templates";
