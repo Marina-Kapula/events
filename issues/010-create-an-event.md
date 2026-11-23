@@ -1,6 +1,6 @@
 # Create an event and send it to review
 
-Status: todo · Opened: 2026-11-21 · Milestone: M2 · Depends on: 002, 005, 006
+Status: done · Opened: 2026-11-21 · Milestone: M2 · Depends on: 002, 005, 006
 
 ## Why
 
@@ -75,7 +75,7 @@ app's templates to `assets/css/source.css`, or Tailwind won't see the classes yo
 @source "../../events/templates";
 ```
 
-- [ ] The app exists, is installed, and its URLs are included.
+- [x] The app exists, is installed, and its URLs are included.
 
 ### 2. The models
 
@@ -174,7 +174,7 @@ uv run python manage.py makemigrations events
 uv run python manage.py migrate
 ```
 
-- [ ] `events/models.py` as above; `events/migrations/0001_initial.py` creates `Event` only
+- [x] `events/models.py` as above; `events/migrations/0001_initial.py` creates `Event` only
       (an abstract model has no table).
 
 ### 3. The form
@@ -232,7 +232,7 @@ class EventForm(forms.ModelForm[Event]):
   `full_clean()`, also when a service saves an event that has already started; the form only
   runs when someone sends it. The admin checks it again when approving (011).
 
-- [ ] `EventForm` as above.
+- [x] `EventForm` as above.
 
 ### 4. The service: save and tell the staff
 
@@ -287,7 +287,7 @@ Approve or reject it in the admin:
 builds `/admin/events/event/<id>/change/`, and `site_url` (added by `send_email`) puts the
 server's address in front (SPEC.md §2 #35).
 
-- [ ] `event_create` and both templates.
+- [x] `event_create` and both templates.
 
 ### 5. The page
 
@@ -370,9 +370,9 @@ navigation for phones, if issue 003 added one). Staff don't see it (SPEC.md §6.
 {% endif %}
 ```
 
-- [ ] Logged in as a student, "Create" opens the form; sending it lands on the home page with
+- [x] Logged in as a student, "Create" opens the form; sending it lands on the home page with
       the message, and the event is in the admin as "Pending".
-- [ ] A file written by the file email backend in `var/mail/` holds the staff email with the
+- [x] A file written by the file email backend in `var/mail/` holds the staff email with the
       admin link.
 
 ### 6. Events in the admin
@@ -428,7 +428,7 @@ class EventAdmin(admin.ModelAdmin[Event]):
 - **`list_select_related`** loads the organizers in the same query as the list, instead of one
   query per row.
 
-- [ ] `/admin/events/event/` lists events with the filters and search; "Add event" creates an
+- [x] `/admin/events/event/` lists events with the filters and search; "Add event" creates an
       approved event organized by you.
 
 ### 7. Tests
@@ -598,21 +598,21 @@ def test_an_event_added_in_the_admin_is_approved(
 `var/media/`. `former_staff` proves that only *active* staff are emailed. (`make_staff` always
 makes an active user, hence the two extra lines.)
 
-- [ ] The tests above pass. `test_admin_opens_every_changelist` now opens the Events page too.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass. `test_admin_opens_every_changelist` now opens the Events page too.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] A student creates an event at `/events/new/`; it is `pending`, they are its organizer, and
+- [x] A student creates an event at `/events/new/`; it is `pending`, they are its organizer, and
       they land on the home page with "Sent to AMFI for review" (test).
-- [ ] Every active staff user gets an email with the event's admin link (test).
-- [ ] A start in the past, or max people outside 2–100, is a form error (tests).
-- [ ] Staff get a 404 on `/events/new/` (test) and don't see the "Create" link.
-- [ ] The admin lists, filters and searches events; `status` and `organizer` are readonly; an
+- [x] Every active staff user gets an email with the event's admin link (test).
+- [x] A start in the past, or max people outside 2–100, is a form error (tests).
+- [x] Staff get a 404 on `/events/new/` (test) and don't see the "Create" link.
+- [x] The admin lists, filters and searches events; `status` and `organizer` are readonly; an
       event added there is approved and organized by the admin (test).
-- [ ] `make_event` is in `tests/conftest.py`.
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] `make_event` is in `tests/conftest.py`.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 
