@@ -66,13 +66,17 @@ def test_login_lands_on_home_and_logout_returns_to_login(
     assert home.status_code == 200
     assert b"student1@example.com" in home.content
     assert b'aria-current="page"' in home.content
-    assert reverse("admin:index").encode() in home.content
+    assert reverse("admin:index").encode() not in home.content
     assert b'<form method="post" action="/accounts/logout/">' in home.content
 
     response = client.post("/accounts/logout/")
     assert response.status_code == 302
     assert response["Location"] == LOGIN_URL
     assert client.get("/").status_code == 302
+
+
+def test_staff_see_the_admin_link_on_home(admin_client: Client) -> None:
+    assert reverse("admin:index").encode() in admin_client.get("/").content
 
 
 def test_logout_by_get_does_not_log_out(

@@ -3,8 +3,17 @@
 {% block title %}Events · AMFI Meetups{% endblock %}
 
 {% block content %}
-<main id="main" class="mx-auto max-w-3xl px-4 py-10">
-  <h1 class="text-xl font-semibold">The event list arrives with its issue</h1>
-  <p class="mt-2"><a href="{% url 'admin:index' %}" class="link link-primary">Open the admin</a></p>
+<main id="main" class="mx-auto max-w-5xl px-4 py-8">
+  <h1 class="text-2xl font-semibold">Events</h1>
+  {# The filters and the event cards come in issue 012. #}
+  <div class="card mt-6 bg-base-100 shadow-sm">
+    <div class="card-body items-center py-16 text-center">
+      <h2 class="card-title">No events yet</h2>
+      <p class="max-w-sm opacity-70">Approved events show up here. Create one, and the AMFI staff will review it.</p>
+      {% if user.is_staff %}
+        <div class="card-actions mt-2"><a href="{% url 'admin:index' %}" class="btn btn-primary">Open the admin</a></div>
+      {% endif %}
+    </div>
+  </div>
 </main>
 {% endblock %}
