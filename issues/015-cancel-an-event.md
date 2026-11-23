@@ -1,6 +1,6 @@
 # Cancel an event
 
-Status: todo · Opened: 2026-11-21 · Milestone: M2 · Depends on: 011, 013, 014
+Status: done · Opened: 2026-11-21 · Milestone: M2 · Depends on: 011, 013, 014
 
 ## Why
 
@@ -102,7 +102,7 @@ The event "{{ event.title }}" on {{ event.starts_at|date:"l j F, H:i" }} is canc
 The `date` filter prints the start in the site's time zone, for example "Friday 4 December,
 19:00".
 
-- [ ] `event_cancel` and its two templates.
+- [x] `event_cancel` and its two templates.
 
 ### 2. The view
 
@@ -143,7 +143,7 @@ path("events/<int:pk>/cancel/", views.event_cancel, name="event_cancel"),
   "the view shows it"). Pressing Cancel on a page left open past the start shows "This event has
   already started." instead of an error page.
 
-- [ ] `event_cancel` (view) and its URL.
+- [x] `event_cancel` (view) and its URL.
 
 ### 3. The button and the confirmation dialog
 
@@ -208,7 +208,7 @@ updated), two simple fallbacks:
 Check: open the page as the organizer, click "Cancel event", press Esc, click again, click "No,
 keep it", click again and confirm. Try it with the keyboard only (Tab, Enter, Esc).
 
-- [ ] The button and the dialog; checked by hand in a browser.
+- [x] The button and the dialog; checked by hand in a browser.
 
 ### 4. The cancelled event's page
 
@@ -219,7 +219,7 @@ page says "This event was cancelled." at the top. Check that every button (join,
 cancel) sits inside a condition that is false for a cancelled event, as the one in step 3 does.
 The tests in step 6 tell you if anything is missing.
 
-- [ ] A cancelled event's page says so and has no buttons.
+- [x] A cancelled event's page says so and has no buttons.
 
 ### 5. The admin button
 
@@ -248,7 +248,7 @@ check. And one more branch in `EventAdmin.response_change`, next to the others:
 The `assert` is the same as in 007: `request.user` is typed "a user, or `AnonymousUser`", and
 the admin only lets staff in.
 
-- [ ] The admin shows "Cancel event" on every event that isn't cancelled, and it works.
+- [x] The admin shows "Cancel event" on every event that isn't cancelled, and it works.
 
 ### 6. Tests
 
@@ -431,22 +431,22 @@ def test_the_admin_cancels_an_event(
     assert b'name="_cancel"' not in admin_client.get(url).content
 ```
 
-- [ ] The tests above pass.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] The organizer cancels their event before it starts, after confirming in a `<dialog>`;
+- [x] The organizer cancels their event before it starts, after confirming in a `<dialog>`;
       afterwards they can't (tests).
-- [ ] Staff cancel any event that isn't cancelled yet, any time, from the admin (tests).
-- [ ] Cancelling deletes the pending `EventChange` and emails everyone going or waiting, one
+- [x] Staff cancel any event that isn't cancelled yet, any time, from the admin (tests).
+- [x] Cancelling deletes the pending `EventChange` and emails everyone going or waiting, one
       email each (tests).
-- [ ] Others and staff get a 404 on the cancel URL, and a GET is a 405 (test).
-- [ ] A cancelled event's page is seen only by the organizer and the people on it, says
+- [x] Others and staff get a 404 on the cancel URL, and a GET is a 405 (test).
+- [x] A cancelled event's page is seen only by the organizer and the people on it, says
       "cancelled" and has no buttons (test).
-- [ ] The dialog works with the mouse and with the keyboard (checked by hand).
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] The dialog works with the mouse and with the keyboard (checked by hand).
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

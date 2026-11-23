@@ -1,0 +1,5 @@
+{% autoescape off %}Hi,
+
+The event "{{ event.title }}" on {{ event.starts_at|date:"l j F, H:i" }} is cancelled.
+{{ site_url }}{% url 'event_detail' event.pk %}
+{% endautoescape %}

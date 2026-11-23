@@ -14,4 +14,9 @@
     <input type="submit" name="_reject_changes" value="Reject changes (write the reason in Review note)">
   </div>
 {% endif %}
+{% if original and original.status != "cancelled" %}
+  <div class="submit-row">
+    <input type="submit" name="_cancel" value="Cancel event (emails everyone on it)">
+  </div>
+{% endif %}
 {% endblock %}

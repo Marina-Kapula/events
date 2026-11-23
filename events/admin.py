@@ -12,6 +12,7 @@ from config.photos import PhotoField
 from events.models import Event, EventChange
 from events.services import (
     event_approve,
+    event_cancel,
     event_change_approve,
     event_change_reject,
     event_reject,
@@ -92,6 +93,12 @@ class EventAdmin(admin.ModelAdmin[Event]):
                 event_change_reject(event=obj, reason=obj.review_note)
                 self.message_user(
                     request, "Changes rejected. The organizer was emailed."
+                )
+            elif "_cancel" in request.POST:
+                assert isinstance(request.user, User)  # the admin requires a login
+                event_cancel(event=obj, by=request.user, now=timezone.now())
+                self.message_user(
+                    request, "Cancelled. Everyone going or waiting was emailed."
                 )
             else:
                 return super().response_change(request, obj)

@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from accounts.models import User
+from events import services
 from events.forms import EventFilterForm, EventForm
 from events.models import Event, EventChange, Participation, Size
 from events.services import (
@@ -149,4 +150,21 @@ def event_leave(request: HttpRequest, pk: int) -> HttpResponse:
         messages.error(request, " ".join(error.messages))
     else:
         messages.success(request, "You left the event.")
+    return redirect("event_detail", pk=event.pk)
+
+
+@require_POST
+def event_cancel(request: HttpRequest, pk: int) -> HttpResponse:
+    user = request.user
+    if not isinstance(user, User) or user.is_staff:
+        raise Http404
+    event = get_object_or_404(Event, pk=pk, organizer=user)
+    try:
+        services.event_cancel(event=event, by=user, now=timezone.now())
+    except ValidationError as error:
+        messages.error(request, " ".join(error.messages))
+    else:
+        messages.success(
+            request, "Event cancelled. Everyone going or waiting was emailed."
+        )
     return redirect("event_detail", pk=event.pk)

@@ -27,7 +27,23 @@
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h1 class="card-title text-2xl">{{ event.title }}</h1>
         {% if event.organizer == user and event.status != "cancelled" and not started %}
-          <a href="{% url 'event_edit' event.pk %}" class="btn btn-sm btn-outline">Edit</a>
+          <div class="flex gap-2">
+            <a href="{% url 'event_edit' event.pk %}" class="btn btn-sm btn-outline">Edit</a>
+            <button type="button" class="btn btn-sm btn-outline btn-error" commandfor="cancel-event" command="show-modal">Cancel event</button>
+          </div>
+          <dialog id="cancel-event" class="modal" aria-labelledby="cancel-event-title">
+            <div class="modal-box">
+              <h2 id="cancel-event-title" class="text-lg font-semibold">Cancel “{{ event.title }}”?</h2>
+              <p class="mt-2">Everyone going or waiting gets an email. You can't undo this.</p>
+              <div class="modal-action">
+                <button type="button" class="btn btn-ghost" commandfor="cancel-event" command="close">No, keep it</button>
+                <form method="post" action="{% url 'event_cancel' event.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-error">Yes, cancel the event</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
         {% endif %}
       </div>
       <p><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"l j F Y, H:i" }}</time></p>

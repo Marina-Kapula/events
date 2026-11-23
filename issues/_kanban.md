@@ -1,6 +1,5 @@
 # todo
 
-- [015-cancel-an-event.md](015-cancel-an-event.md)
 - [016-my-events.md](016-my-events.md)
 - [017-soft-delete-students.md](017-soft-delete-students.md)
 - [018-demo-data.md](018-demo-data.md)
@@ -25,6 +24,7 @@
 - [011-review-events-in-the-admin.md](011-review-events-in-the-admin.md)
 - [013-join-leave-and-the-waiting-list.md](013-join-leave-and-the-waiting-list.md)
 - [014-edit-events-and-pending-changes.md](014-edit-events-and-pending-changes.md)
+- [015-cancel-an-event.md](015-cancel-an-event.md)
 
 # backlog
 

@@ -222,3 +222,20 @@ def event_change_reject(*, event: Event, reason: str) -> None:
             context={"event": event, "reason": reason},
         )
     )
+
+
+@transaction.atomic
+def event_cancel(*, event: Event, by: User, now: datetime) -> None:
+    """Cancels the event for good (SPEC.md §2 #27).
+
+    `by` is who cancels: the organizer (only before the start) or staff (any time).
+    """
+    if event.status == Event.Status.CANCELLED:
+        raise ValidationError("This event is already cancelled.")
+    if not by.is_staff and event.starts_at <= now:
+        raise ValidationError("This event has already started.")
+    EventChange.objects.filter(event=event).delete()
+    event.status = Event.Status.CANCELLED
+    event.full_clean()
+    event.save()
+    _email_everyone_on(event, template="events/emails/event_cancelled")
