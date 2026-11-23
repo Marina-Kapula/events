@@ -8,4 +8,10 @@
   <input type="submit" name="_reject" value="Reject (write the reason in Review note first)">
 </div>
 {% endif %}
+{% if original.status == "approved" and original.change %}
+  <div class="submit-row">
+    <input type="submit" name="_approve_changes" value="Approve changes">
+    <input type="submit" name="_reject_changes" value="Reject changes (write the reason in Review note)">
+  </div>
+{% endif %}
 {% endblock %}

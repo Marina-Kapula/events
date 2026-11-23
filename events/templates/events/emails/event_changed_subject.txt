@@ -1,0 +1,1 @@
+{% autoescape off %}"{{ event.title }}" has changed{% endautoescape %}

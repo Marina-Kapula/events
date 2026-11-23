@@ -4,7 +4,7 @@ from django import forms
 from django.utils import timezone
 
 from config.photos import PhotoField
-from events.models import Event, Size
+from events.models import Event, Participation, Size
 
 
 class EventForm(forms.ModelForm[Event]):
@@ -35,6 +35,20 @@ class EventForm(forms.ModelForm[Event]):
         if starts_at <= timezone.now():
             raise forms.ValidationError("Pick a date and time in the future.")
         return starts_at
+
+    def clean_max_people(self) -> int:
+        max_people: int = self.cleaned_data["max_people"]
+        if self.instance.pk is None:  # a new event: nobody is going yet
+            return max_people
+        going = Participation.objects.filter(
+            event=self.instance, status=Participation.Status.GOING
+        ).count()
+        if max_people < 1 + going:
+            raise forms.ValidationError(
+                f"{going} people are going, so you need at least {1 + going} spots "
+                "(you count too)."
+            )
+        return max_people
 
 
 class EventFilterForm(forms.Form):

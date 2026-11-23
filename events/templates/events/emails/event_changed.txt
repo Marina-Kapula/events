@@ -1,0 +1,5 @@
+{% autoescape off %}Hi,
+
+The event "{{ event.title }}" has new details, approved by AMFI. Check them here:
+{{ site_url }}{% url 'event_detail' event.pk %}
+{% endautoescape %}

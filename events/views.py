@@ -7,13 +7,22 @@ from django.views.decorators.http import require_POST
 
 from accounts.models import User
 from events.forms import EventFilterForm, EventForm
-from events.models import Event, Participation, Size
-from events.services import event_create, participation_join, participation_leave
+from events.models import Event, EventChange, Participation, Size
+from events.services import (
+    event_create,
+    event_update,
+    participation_join,
+    participation_leave,
+)
 
 
 def event_list(request: HttpRequest) -> HttpResponse:
     form = EventFilterForm(request.GET)
-    events = Event.objects.listed(now=timezone.now()).with_going_count()
+    events = (
+        Event.objects.listed(now=timezone.now())
+        .select_related("change")
+        .with_going_count()
+    )
     if form.is_valid():
         data = form.cleaned_data
         if data["q"]:
@@ -34,7 +43,7 @@ def event_detail(request: HttpRequest, pk: int) -> HttpResponse:
     if not isinstance(user, User):
         raise Http404
     event = get_object_or_404(
-        Event.objects.visible_to(user).select_related("organizer"), pk=pk
+        Event.objects.visible_to(user).select_related("organizer", "change"), pk=pk
     )
     participations = list(
         Participation.objects.filter(event=event).select_related("user")
@@ -53,6 +62,7 @@ def event_detail(request: HttpRequest, pk: int) -> HttpResponse:
             "is_full": 1 + len(going) >= event.max_people,
             "is_open": event.status == Event.Status.APPROVED
             and event.starts_at > timezone.now(),
+            "started": event.starts_at <= timezone.now(),
         },
     )
 
@@ -72,6 +82,37 @@ def event_new(request: HttpRequest) -> HttpResponse:
     else:
         form = EventForm()
     return render(request, "events/event_form.html", {"form": form})
+
+
+def event_edit(request: HttpRequest, pk: int) -> HttpResponse:
+    user = request.user
+    if not isinstance(user, User) or user.is_staff:
+        raise Http404
+    event = get_object_or_404(
+        Event.objects.exclude(status=Event.Status.CANCELLED),
+        pk=pk,
+        organizer=user,
+        starts_at__gt=timezone.now(),
+    )
+    change = EventChange.objects.filter(event=event).first()
+    # The form fills a second copy of the event; event_update decides where the
+    # values go. Pre-filled from the pending changes, if there are some.
+    edited = Event.objects.get(pk=event.pk)
+    if change is not None:
+        change.copy_fields_to(edited)
+    if request.method == "POST":
+        form = EventForm(request.POST, request.FILES, instance=edited)
+        if form.is_valid():
+            event_update(event=event, edited=edited)
+            messages.success(request, "Saved and sent to AMFI for review.")
+            return redirect("event_detail", pk=event.pk)
+    else:
+        form = EventForm(instance=edited)
+    return render(
+        request,
+        "events/event_form.html",
+        {"form": form, "event": event, "change": change},
+    )
 
 
 @require_POST

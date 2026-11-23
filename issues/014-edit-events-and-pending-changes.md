@@ -1,6 +1,6 @@
 # Edit an event, and review the changes in the admin
 
-Status: todo · Opened: 2026-11-21 · Milestone: M2 · Depends on: 011, 013
+Status: done · Opened: 2026-11-21 · Milestone: M2 · Depends on: 011, 013
 
 ## Why
 
@@ -112,7 +112,7 @@ Why each piece is there:
 uv run python manage.py makemigrations events
 ```
 
-- [ ] `EventFields.copy_fields_to` and `EventChange` as above; the migration exists.
+- [x] `EventFields.copy_fields_to` and `EventChange` as above; the migration exists.
 
 ### 2. Max people can't go below the people already going
 
@@ -141,7 +141,7 @@ form refuses it (§6.5). Add this method to `EventForm` in `events/forms.py` (im
 ([form validation](https://docs.djangoproject.com/en/6.1/ref/forms/validation/)). On the create
 page (010) the instance has no `pk` yet, so the check is skipped.
 
-- [ ] `EventForm.clean_max_people` as above.
+- [x] `EventForm.clean_max_people` as above.
 
 ### 3. The services
 
@@ -318,7 +318,7 @@ You can edit it again here:
 {% endautoescape %}
 ```
 
-- [ ] The three services, the two helpers and the six templates.
+- [x] The three services, the two helpers and the six templates.
 
 ### 4. The edit page
 
@@ -398,7 +398,7 @@ Why each piece is there:
 
 Style it with your UI library (003); the form itself doesn't change.
 
-- [ ] `event_edit` and its URL; the page explains the three cases.
+- [x] `event_edit` and its URL; the page explains the three cases.
 
 ### 5. "Edit" and "Changes pending" on the pages
 
@@ -436,7 +436,7 @@ and in `event_detail` make it `select_related("organizer", "change")`. A reverse
 works with `select_related`. The `django_assert_num_queries` tests of 012 and 013 prove it: they
 must pass with the same numbers as before.
 
-- [ ] The Edit link, the warning line and the badge; the list's query-count tests still pass.
+- [x] The Edit link, the warning line and the badge; the list's query-count tests still pass.
 
 ### 6. The admin: the change, read only, and two buttons
 
@@ -515,7 +515,7 @@ As in 011: the form is saved first (so `obj.review_note` is what the admin just 
 button calls its service; a `ValidationError` becomes a red message and the admin stays on the
 page.
 
-- [ ] The inline, the column and the two buttons work in `/admin/`.
+- [x] The inline, the column and the two buttons work in `/admin/`.
 
 ### 7. Tests
 
@@ -990,27 +990,27 @@ def test_the_admin_rejects_changes_with_the_review_note(
     assert not EventChange.objects.exists()
 ```
 
-- [ ] The tests above pass, and so do 011's, through `press_admin_button`.
+- [x] The tests above pass, and so do 011's, through `press_admin_button`.
       `test_models_and_migrations_agree` and the admin smoke test (every changelist opens) pass
       too.
-- [ ] `scripts/check.sh` passes.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] Editing a pending or rejected event changes it in place and sends it back to `pending`;
+- [x] Editing a pending or rejected event changes it in place and sends it back to `pending`;
       staff are emailed (tests).
-- [ ] Editing an approved event creates or replaces its `EventChange`; the public version and
+- [x] Editing an approved event creates or replaces its `EventChange`; the public version and
       sign-ups don't change; staff are emailed; the form is pre-filled from the change (tests).
-- [ ] A photo that isn't uploaded again keeps its file name (test).
-- [ ] Max people below `1 + going` is a form error, and is refused again on approval (tests).
-- [ ] Others, staff, started and cancelled events get a 404 on the edit page (tests).
-- [ ] In the admin, the change is read only on the event's page; "Approve changes" copies it,
+- [x] A photo that isn't uploaded again keeps its file name (test).
+- [x] Max people below `1 + going` is a form error, and is refused again on approval (tests).
+- [x] Others, staff, started and cancelled events get a 404 on the edit page (tests).
+- [x] In the admin, the change is read only on the event's page; "Approve changes" copies it,
       moves the waiting list up and emails the organizer and everyone going or waiting;
       "Reject changes" needs a reason, keeps the event and emails the organizer (tests).
-- [ ] The card shows "Changes pending", the event page one line; the list's query count is
+- [x] The card shows "Changes pending", the event page one line; the list's query count is
       unchanged (tests).
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

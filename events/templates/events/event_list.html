@@ -33,7 +33,11 @@
           <div class="flex flex-wrap gap-1">
             <span class="badge badge-primary badge-sm">{{ event.get_type_display }}</span>
             <span class="badge badge-ghost badge-sm">{{ event.language }}</span>
-            {% if event.status != "approved" %}<span class="badge badge-warning badge-sm">{{ event.get_status_display }}</span>{% endif %}
+            {% if event.change %}
+              <span class="badge badge-info badge-sm">Changes pending</span>
+            {% elif event.status != "approved" %}
+              <span class="badge badge-warning badge-sm">{{ event.get_status_display }}</span>
+            {% endif %}
           </div>
           <p class="text-sm opacity-70"><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"D j M Y · H:i" }}</time></p>
           <h2 class="card-title text-lg"><a href="{% url 'event_detail' event.pk %}" class="link-hover">{{ event.title }}</a></h2>

@@ -1,0 +1,9 @@
+{% autoescape off %}Hi {{ event.organizer.full_name }},
+
+AMFI did not approve your changes to "{{ event.title }}", so the event stays as it was.
+
+The reason: {{ reason }}
+
+You can edit it again here:
+{{ site_url }}{% url 'event_edit' event.pk %}
+{% endautoescape %}

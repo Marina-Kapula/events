@@ -4,6 +4,7 @@ from datetime import timedelta
 import pytest
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.http import HttpResponseBase
 from django.test import Client
 from django.utils import timezone
 from pytest_django import DjangoCaptureOnCommitCallbacks
@@ -80,26 +81,9 @@ def test_rejecting_needs_a_reason(make_event: Callable[..., Event]) -> None:
         event_reject(event=event, reason="  ")
 
 
-def change_form(event: Event, **extra: str) -> dict[str, object]:
-    """What the admin's change form sends for `event`, plus a button's name."""
-    starts_at = timezone.localtime(event.starts_at)
-    return {
-        "title": event.title,
-        "description": event.description,
-        "city": event.city,
-        "place": event.place,
-        "starts_at_0": starts_at.strftime("%Y-%m-%d"),
-        "starts_at_1": starts_at.strftime("%H:%M:%S"),
-        "type": event.type,
-        "max_people": event.max_people,
-        "language": event.language,
-        "review_note": event.review_note,
-        **extra,
-    }
-
-
 def test_the_approve_button(
     admin_client: Client,
+    press_admin_button: Callable[..., HttpResponseBase],
     make_event: Callable[..., Event],
     mailoutbox: list[mail.EmailMessage],
     django_capture_on_commit_callbacks: DjangoCaptureOnCommitCallbacks,
@@ -109,7 +93,7 @@ def test_the_approve_button(
     assert b'name="_approve"' in admin_client.get(url).content
 
     with django_capture_on_commit_callbacks(execute=True):
-        response = admin_client.post(url, change_form(event, _approve="Approve"))
+        response = press_admin_button(event, "_approve")
 
     assert response.status_code == 302
     assert response["Location"] == url
@@ -120,14 +104,12 @@ def test_the_approve_button(
 
 
 def test_the_reject_button_takes_the_review_note(
-    admin_client: Client, make_event: Callable[..., Event]
+    press_admin_button: Callable[..., HttpResponseBase],
+    make_event: Callable[..., Event],
 ) -> None:
     event = make_event(status=Event.Status.PENDING)
-    url = f"/admin/events/event/{event.pk}/change/"
 
-    admin_client.post(
-        url, change_form(event, review_note="Add the address.", _reject="Reject")
-    )
+    press_admin_button(event, "_reject", review_note="Add the address.")
 
     event.refresh_from_db()
     assert event.status == Event.Status.REJECTED
@@ -135,13 +117,15 @@ def test_the_reject_button_takes_the_review_note(
 
 
 def test_the_reject_button_without_a_reason_shows_an_error(
-    admin_client: Client, make_event: Callable[..., Event]
+    admin_client: Client,
+    press_admin_button: Callable[..., HttpResponseBase],
+    make_event: Callable[..., Event],
 ) -> None:
     event = make_event(status=Event.Status.PENDING)
-    url = f"/admin/events/event/{event.pk}/change/"
 
-    response = admin_client.post(url, change_form(event, _reject="Reject"), follow=True)
+    response = press_admin_button(event, "_reject")
 
-    assert "Write the reason" in response.content.decode()
+    page = admin_client.get(response["Location"])
+    assert "Write the reason" in page.content.decode()
     event.refresh_from_db()
     assert event.status == Event.Status.PENDING

@@ -37,6 +37,11 @@ class EventFields(models.Model):
     class Meta:
         abstract = True
 
+    def copy_fields_to(self, other: EventFields) -> None:
+        """Copies the editable fields (the ones of this class) onto `other`."""
+        for field in EventFields._meta.fields:
+            setattr(other, field.name, getattr(self, field.name))
+
 
 class Size(models.TextChoices):
     """The size filter of the event list (SPEC §2 #29)."""
@@ -116,6 +121,17 @@ class Event(EventFields):
     @override
     def __str__(self) -> str:
         return self.title
+
+
+class EventChange(EventFields):
+    """An organizer's edit of an approved event, waiting for AMFI (SPEC.md §2 #17)."""
+
+    event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name="change")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @override
+    def __str__(self) -> str:
+        return f"Changes to {self.event}"
 
 
 class Participation(models.Model):

@@ -1,13 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}New event · AMFI Meetups{% endblock %}
+{% block title %}{% if event %}Edit event{% else %}New event{% endif %} · AMFI Meetups{% endblock %}
 
 {% block content %}
 <main id="main" class="mx-auto max-w-md px-4 py-10">
   <div class="card bg-base-100 shadow-sm">
     <div class="card-body">
-      <h1 class="card-title">New event</h1>
-      <p class="opacity-70">AMFI checks every event before it is listed. We'll email you when it's approved.</p>
+      {% if event %}
+        <h1 class="card-title">Edit “{{ event.title }}”</h1>
+        {% if event.status == "approved" %}
+          <p class="opacity-70">This event is public. AMFI reviews your changes first; until then everyone sees
+            the current version, and people can still join.
+            {% if change %}You already sent changes: saving replaces them.{% endif %}</p>
+        {% elif event.status == "rejected" %}
+          <p class="opacity-70">AMFI rejected this event: “{{ event.review_note }}”. Fix it and save: it goes back to review.</p>
+        {% else %}
+          <p class="opacity-70">AMFI is reviewing this event. Saving sends them your new version.</p>
+        {% endif %}
+      {% else %}
+        <h1 class="card-title">New event</h1>
+        <p class="opacity-70">AMFI checks every event before it is listed. We'll email you when it's approved.</p>
+      {% endif %}
       <form method="post" enctype="multipart/form-data" class="django-form grid gap-2">
         {% csrf_token %}
         {{ form }}

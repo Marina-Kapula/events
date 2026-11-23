@@ -1,0 +1,5 @@
+{% autoescape off %}{{ event.organizer.full_name }} {% if event.status == "approved" %}proposed changes to{% else %}edited{% endif %} the event "{{ event.title }}".
+
+Review {% if event.status == "approved" %}the changes{% else %}it{% endif %} in the admin:
+{{ site_url }}{% url 'admin:events_event_change' event.pk %}
+{% endautoescape %}

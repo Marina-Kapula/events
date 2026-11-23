@@ -107,6 +107,8 @@ def test_an_event_added_in_the_admin_is_approved(
         starts_at_0=starts_at.strftime("%Y-%m-%d"),
         starts_at_1=starts_at.strftime("%H:%M"),
         review_note="",
+        # The hidden inputs of the "changes" inline (014): no rows.
+        **{"change-TOTAL_FORMS": "0", "change-INITIAL_FORMS": "0"},
     )
 
     response = admin_client.post("/admin/events/event/add/", data)

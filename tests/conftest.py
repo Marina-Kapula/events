@@ -4,7 +4,10 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
-from django.test import override_settings
+from django.forms import FileField, SplitDateTimeWidget
+from django.http import HttpResponseBase
+from django.test import Client, override_settings
+from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import RegistrationWindow, User
@@ -146,3 +149,32 @@ def make_participation(
         return participation
 
     return make
+
+
+@pytest.fixture
+def press_admin_button(admin_client: Client) -> Callable[..., HttpResponseBase]:
+    """Posts an event's admin page as the browser would, through one of its buttons."""
+
+    def press(event: Event, button: str, **changes: object) -> HttpResponseBase:
+        url = reverse("admin:events_event_change", args=[event.pk])
+        context = admin_client.get(url).context
+        # The event's form, and each inline's forms with its "management form".
+        forms = [context["adminform"].form]
+        for inline in context["inline_admin_formsets"]:
+            forms += [inline.formset.management_form, *inline.formset.forms]
+        data: dict[str, object] = {}
+        for form in forms:
+            for field in form:
+                value = field.value()
+                if isinstance(field.field.widget, SplitDateTimeWidget):
+                    date, time = field.field.widget.decompress(value)
+                    data[f"{field.html_name}_0"] = date
+                    data[f"{field.html_name}_1"] = time
+                elif not isinstance(field.field, FileField):  # no file: keep it
+                    data[field.html_name] = value
+        data |= {button: "on", **changes}
+        return admin_client.post(
+            url, {name: value for name, value in data.items() if value is not None}
+        )
+
+    return press
