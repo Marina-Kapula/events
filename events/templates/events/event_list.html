@@ -38,7 +38,7 @@
           <p class="text-sm opacity-70"><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"D j M Y · H:i" }}</time></p>
           <h2 class="card-title text-lg"><a href="{% url 'event_detail' event.pk %}" class="link-hover">{{ event.title }}</a></h2>
           <p class="text-sm">{{ event.city }} · {{ event.place }}</p>
-          <p class="text-sm opacity-70">Up to {{ event.max_people }} people</p>
+          <p class="text-sm opacity-70">{{ event.going_count|add:1 }} / {{ event.max_people }} spots</p>
         </div>
       </article>
       {% endpartialdef %}

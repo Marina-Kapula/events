@@ -8,7 +8,7 @@ from django.test import override_settings
 from django.utils import timezone
 
 from accounts.models import RegistrationWindow, User
-from events.models import Event
+from events.models import Event, Participation
 
 PASSWORD = "s3cret-pass"
 
@@ -128,5 +128,21 @@ def make_event(make_student: Callable[..., User]) -> Callable[..., Event]:
         event.full_clean()
         event.save()
         return event
+
+    return make
+
+
+@pytest.fixture
+def make_participation(
+    make_student: Callable[..., User],
+) -> Callable[..., Participation]:
+    def make(event: Event, **overrides: object) -> Participation:
+        fields: dict[str, object] = {"status": Participation.Status.GOING, **overrides}
+        if "user" not in fields:
+            fields["user"] = make_student()
+        participation = Participation(event=event, **fields)
+        participation.full_clean()
+        participation.save()
+        return participation
 
     return make

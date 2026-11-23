@@ -1,0 +1,8 @@
+{% autoescape off %}Hi {{ student.full_name }},
+
+A spot freed up and it's yours: you are going to "{{ event.title }}" on
+{{ event.starts_at|date:"l j F, H:i" }}.
+
+Can't make it? Leave the event, so the next person gets the spot:
+{{ site_url }}{% url "event_detail" event.pk %}
+{% endautoescape %}

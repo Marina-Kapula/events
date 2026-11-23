@@ -1,6 +1,6 @@
 # Join, leave and the waiting list
 
-Status: todo · Opened: 2026-11-21 · Milestone: M2 · Depends on: 012
+Status: done · Opened: 2026-11-21 · Milestone: M2 · Depends on: 012
 
 ## Why
 
@@ -109,7 +109,7 @@ class Participation(models.Model):
 uv run python manage.py makemigrations events
 ```
 
-- [ ] `events/migrations/0002_participation.py` creates the table and the constraint.
+- [x] `events/migrations/0002_participation.py` creates the table and the constraint.
 
 ### 2. Two QuerySet changes
 
@@ -150,7 +150,7 @@ going:
   (pyrefly doesn't know it exists, AGENTS.md, Typing); templates may. Issue 016 calls it too,
   for the cards on "My events".
 
-- [ ] `visible_to` and `with_going_count` as above.
+- [x] `visible_to` and `with_going_count` as above.
 
 ### 3. The services
 
@@ -320,7 +320,7 @@ Can't make it? Leave the event, so the next person gets the spot:
 {% endautoescape %}
 ```
 
-- [ ] The three services and four templates.
+- [x] The three services and four templates.
 
 ### 4. The views
 
@@ -421,7 +421,7 @@ def event_detail(request: HttpRequest, pk: int) -> HttpResponse:
 The view decides the facts (open? full? am I on it?); the template only picks the button. The
 service checks them all again when the button is pressed, so a stale page can't break a rule.
 
-- [ ] Join and Leave work from the event page, with a message each time.
+- [x] Join and Leave work from the event page, with a message each time.
 
 ### 5. The templates
 
@@ -487,7 +487,7 @@ replaces the one from 012. The structure; style it with your UI library:
 - **`student.nationality.name`**: django-countries turns `"ES"` into "Spain".
 - **The waiting list shows only a number.** Who is waiting isn't anyone's business.
 
-- [ ] The page shows the right button in each state, the people going and the waiting count.
+- [x] The page shows the right button in each state, the people going and the waiting count.
 
 ### 6. Tests
 
@@ -871,26 +871,26 @@ The messages appear HTML-escaped in the page: `You're` is `You&#x27;re` in `resp
 A test can't easily press Join twice at the same moment; the transaction, `IMMEDIATE` and the
 unique constraint are what keep that case right, and the code review is where you check them.
 
-- [ ] The tests above pass. 012's `django_assert_num_queries` test still counts 3.
-- [ ] `scripts/check.sh` passes.
+- [x] The tests above pass. 012's `django_assert_num_queries` test still counts 3.
+- [x] `scripts/check.sh` passes.
 
 ## Done when
 
-- [ ] Join puts a student on the event: `going` while `1 + going < max_people`, then `waiting`
+- [x] Join puts a student on the event: `going` while `1 + going < max_people`, then `waiting`
       (test with the last spot).
-- [ ] The organizer, staff, a second join, a started event and an event that isn't approved are
+- [x] The organizer, staff, a second join, a started event and an event that isn't approved are
       refused (tests).
-- [ ] Leave deletes the row before the start; someone going leaving emails the organizer and
+- [x] Leave deletes the row before the start; someone going leaving emails the organizer and
       gives the spot to the oldest waiting, who is emailed (tests).
-- [ ] `waiting_list_move_up` fills every free spot, oldest first (test).
-- [ ] Join and leave are POST only (405 for GET), redirect to the event with a message, and 404
+- [x] `waiting_list_move_up` fills every free spot, oldest first (test).
+- [x] Join and leave are POST only (405 for GET), redirect to the event with a message, and 404
       for staff and for events you can't see (tests).
-- [ ] The event page shows the right button, the organizer first then everyone going, and
+- [x] The event page shows the right button, the organizer first then everyone going, and
       "Waiting: n"; cards show "n / max spots" in 3 queries for the list (tests).
-- [ ] A cancelled event's page opens for the people on it, without buttons, and 404s for others
+- [x] A cancelled event's page opens for the people on it, without buttons, and 404s for others
       (test).
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

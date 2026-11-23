@@ -4,7 +4,7 @@ from typing import Self, override
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Count, Exists, OuterRef, Q
 
 from accounts.models import User
 
@@ -55,7 +55,21 @@ class EventQuerySet(models.QuerySet["Event"]):
 
     def visible_to(self, user: User) -> Self:
         """The events whose page `user` may open (SPEC §6.3)."""
-        return self.filter(Q(status=Event.Status.APPROVED) | Q(organizer=user))
+        is_on_it = Exists(Participation.objects.filter(event=OuterRef("pk"), user=user))
+        return self.filter(
+            Q(status=Event.Status.APPROVED)
+            | Q(organizer=user)
+            | (Q(status=Event.Status.CANCELLED) & is_on_it)
+        )
+
+    def with_going_count(self) -> Self:
+        """Adds `going_count`: how many people are going, the organizer not counted."""
+        return self.annotate(
+            going_count=Count(
+                "participations",
+                filter=Q(participations__status=Participation.Status.GOING),
+            )
+        )
 
     def search(self, text: str) -> Self:
         return self.filter(Q(title__icontains=text) | Q(description__icontains=text))
@@ -102,3 +116,33 @@ class Event(EventFields):
     @override
     def __str__(self) -> str:
         return self.title
+
+
+class Participation(models.Model):
+    class Status(models.TextChoices):
+        GOING = "going", "Going"
+        WAITING = "waiting", "Waiting"
+
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, related_name="participations"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="participations",
+    )
+    status = models.CharField(max_length=10, choices=Status.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=("event", "user"), name="one_participation_per_user_and_event"
+            ),
+        )
+        # First come, first served: the waiting list moves up in this order.
+        ordering = ("created_at", "id")
+
+    @override
+    def __str__(self) -> str:
+        return f"{self.user} {self.status} {self.event}"

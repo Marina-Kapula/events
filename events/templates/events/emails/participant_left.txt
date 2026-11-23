@@ -1,0 +1,7 @@
+{% autoescape off %}Hi {{ event.organizer.full_name }},
+
+{{ participant.full_name }} is no longer going to "{{ event.title }}". If someone was on the
+waiting list, they have the spot now.
+
+{{ site_url }}{% url "event_detail" event.pk %}
+{% endautoescape %}

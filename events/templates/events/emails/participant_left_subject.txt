@@ -1,0 +1,1 @@
+{% autoescape off %}{{ participant.full_name }} left {{ event.title }}{% endautoescape %}

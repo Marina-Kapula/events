@@ -1,0 +1,1 @@
+{% autoescape off %}You got a spot: {{ event.title }}{% endautoescape %}
