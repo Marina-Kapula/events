@@ -48,6 +48,8 @@ Do each once and watch what happens, with real output to compare; each issue say
 - [Deploy to Dokku](deployment/deploy-to-dokku.md): from ordering an OVHcloud VPS to a running
   site with HTTPS, step by step with the why; environment variables, Brevo email, redeploys,
   logs, troubleshooting.
+- [Deploy to Render](deployment/render.md): the free alternative, with Postgres and
+  Brevo's API.
 - [Backups](deployment/backups.md): pull a copy of the database with `scripts/pull-backup.sh`,
   restore it.
 

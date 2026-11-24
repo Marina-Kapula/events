@@ -1,0 +1,44 @@
+# Render Blueprint (docs/deployment/render.md): the site on the free plan, its data in
+# Render's free Postgres. Secrets marked `sync: false` are typed in Render's dashboard.
+services:
+  - type: web
+    name: amfi-meetups
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /accounts/login/
+    # The free plan has no pre-deploy step: migrate on each start.
+    dockerCommand: >-
+      sh -c "python manage.py migrate --noinput
+      && python manage.py ensure_admin
+      && gunicorn config.wsgi --workers 2 --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: amfi-meetups-db
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_HTTPS
+        value: "true"
+      - key: DJANGO_MEDIA_IN_DB
+        value: "true"
+      - key: EMAIL_BACKEND
+        value: config.brevo.BrevoEmailBackend
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: DJANGO_SITE_URL
+        sync: false
+      - key: DJANGO_DEFAULT_FROM_EMAIL
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: DJANGO_ADMIN_EMAIL
+        sync: false
+      - key: DJANGO_ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: amfi-meetups-db
+    plan: free
+    region: frankfurt

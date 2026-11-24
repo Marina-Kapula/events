@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import dj_database_url
 import django_stubs_ext
 from django.core.exceptions import ImproperlyConfigured
 
@@ -58,6 +59,7 @@ INSTALLED_APPS: list[str] = [
     "django_countries",  # country list for the nationality field
     "accounts",  # users
     "events",
+    "files",  # photos kept in the database, on hosts without a lasting disk
 ]
 
 # Use our own User model instead of Django's built-in one.
@@ -113,6 +115,13 @@ DATABASES: dict[str, dict[str, object]] = {
         },
     },
 }
+# On Render (docs/deployment/render.md) the disk is wiped on each restart: the data
+# lives in Render's Postgres instead, given as DATABASE_URL.
+_database_url = env_str("DATABASE_URL", "")
+if _database_url:
+    DATABASES["default"] = dict(
+        dj_database_url.parse(_database_url, conn_max_age=600, conn_health_checks=True)
+    )
 
 _VALIDATION = "django.contrib.auth.password_validation"
 AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
@@ -141,7 +150,13 @@ STATICFILES_DIRS: list[Path] = [BASE_DIR / "assets" / "static"]
 # collectstatic's output (git-ignored), built into the Docker image.
 STATIC_ROOT: Path = BASE_DIR / "staticfiles"
 STORAGES: dict[str, dict[str, str]] = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    # DJANGO_MEDIA_IN_DB=true keeps uploaded photos in the database (files.storage),
+    # where the disk doesn't last, as on Render.
+    "default": {
+        "BACKEND": "files.storage.DatabaseStorage"
+        if env_bool("DJANGO_MEDIA_IN_DB", default=False)
+        else "django.core.files.storage.FileSystemStorage"
+    },
     # Content-hashed, compressed copies that WhiteNoise serves with far-future caching.
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -173,6 +188,9 @@ _EMAIL_OPTIONS: dict[str, dict[str, object]] = {
         "use_ssl": env_bool("EMAIL_USE_SSL", default=False),
         "timeout": 10,
     },
+    # Through Brevo's HTTPS API: for hosts that block the SMTP ports, as Render's free
+    # plan does. The key is only ever set on the host (docs/deployment/render.md).
+    "config.brevo.BrevoEmailBackend": {"api_key": env_str("BREVO_API_KEY", "")},
     # Each email is written to a file here and nothing is sent.
     "django.core.mail.backends.filebased.EmailBackend": {
         "file_path": BASE_DIR / "var" / "mail"

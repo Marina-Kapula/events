@@ -37,6 +37,16 @@ def _people_on(event: Event) -> list[User]:
     ]
 
 
+def _lock(event: Event) -> None:
+    """Locks the event's row until the transaction ends, and reloads it.
+
+    On Postgres a second join, leave or review of the same event waits here, so two
+    people can't take the last spot. SQLite has no row locks: its IMMEDIATE
+    transactions already lock the whole database (config/settings.py).
+    """
+    event.refresh_from_db(from_queryset=Event.objects.select_for_update())
+
+
 def _email_staff(*, event: Event, template: str) -> None:
     staff = User.objects.filter(is_staff=True, is_active=True)
     emails = [user.email for user in staff]
@@ -104,7 +114,7 @@ def participation_join(*, event: Event, user: User, now: datetime) -> Participat
     # With SQLite's IMMEDIATE mode the transaction takes the write lock right here: a
     # second join waits until this one commits, then counts the spot we just took.
     with transaction.atomic():
-        event.refresh_from_db()
+        _lock(event)
         if event.status != Event.Status.APPROVED or event.starts_at <= now:
             raise ValidationError("This event is not open for sign-ups.")
         if user.is_staff:
@@ -136,6 +146,7 @@ def participation_join(*, event: Event, user: User, now: datetime) -> Participat
 def participation_leave(*, event: Event, user: User, now: datetime) -> None:
     """Take `user` off the event, going or waiting (SPEC §6.4)."""
     with transaction.atomic():
+        _lock(event)
         if event.status != Event.Status.APPROVED or event.starts_at <= now:
             raise ValidationError("You can't leave this event any more.")
         participation = Participation.objects.filter(event=event, user=user).first()
@@ -162,6 +173,7 @@ def participation_leave(*, event: Event, user: User, now: datetime) -> None:
 def waiting_list_move_up(*, event: Event) -> None:
     """While a spot is free, give it to whoever has waited longest (SPEC §6.4)."""
     with transaction.atomic():
+        _lock(event)
         going = Participation.objects.filter(
             event=event, status=Participation.Status.GOING
         ).count()
@@ -229,6 +241,7 @@ def _email_everyone_on(event: Event, *, template: str) -> None:
 
 @transaction.atomic
 def event_change_approve(*, event: Event, now: datetime) -> None:
+    _lock(event)
     change = EventChange.objects.filter(event=event).first()
     if event.status != Event.Status.APPROVED or change is None:
         raise ValidationError("This event has no changes to approve.")

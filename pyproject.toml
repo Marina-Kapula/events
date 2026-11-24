@@ -5,12 +5,14 @@ description = "Meetup-style events for Erasmus students hosted by AMFI Internati
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "dj-database-url>=3.1,<4",
     "django>=6.1,<6.2",
     "django-countries>=9.1.0",
     "django-stubs-ext>=6.1,<6.2",
     "django-tailwind-cli>=4.8,<4.9",
     "gunicorn>=26.2,<27",
     "pillow>=13.0.0",
+    "psycopg[binary]>=3.3,<3.4",
     "segno>=1.6.6",
     "whitenoise>=6.12,<7",
 ]
