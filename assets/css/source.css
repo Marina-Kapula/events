@@ -20,6 +20,9 @@
   .django-form input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]) {
     @apply input w-full;
   }
+  .django-form textarea {
+    @apply textarea w-full;
+  }
   .django-form select {
     @apply select w-full;
   }

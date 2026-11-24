@@ -21,7 +21,7 @@
         <h1 class="card-title">New event</h1>
         <p class="opacity-70">AMFI checks every event before it is listed. We'll email you when it's approved.</p>
       {% endif %}
-      <form method="post" enctype="multipart/form-data" class="django-form grid gap-2">
+      <form method="post" enctype="multipart/form-data" class="django-form grid grid-cols-1 gap-2">
         {% csrf_token %}
         {{ form }}
         <button type="submit" class="btn btn-primary mt-2">Send to review</button>

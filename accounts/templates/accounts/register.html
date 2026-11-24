@@ -10,7 +10,7 @@
     <div class="card-body">
       <h1 class="card-title">Welcome to AMFI Meetups</h1>
       <p class="opacity-70">Fill in your profile. Other students will see your photo, name, age, nationality and gender.</p>
-      <form method="post" enctype="multipart/form-data" class="django-form grid gap-2">
+      <form method="post" enctype="multipart/form-data" class="django-form grid grid-cols-1 gap-2">
         {% csrf_token %}
         {{ form }}
         <button type="submit" class="btn btn-primary mt-2">Register</button>
