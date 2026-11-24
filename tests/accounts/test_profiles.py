@@ -88,6 +88,19 @@ def test_student_edits_their_profile_and_keeps_the_photo(
     assert student.photo.name == "photos/users/student.jpg"
 
 
+def test_the_profile_page_shows_the_photo_not_its_file_name(
+    client: Client, make_student: Callable[..., User]
+) -> None:
+    student = make_student()
+    client.force_login(student)
+
+    page = client.get(reverse("profile_edit")).content.decode()
+
+    assert f'src="{student.photo.url}"' in page
+    assert "Change photo" in page
+    assert "Currently" not in page
+
+
 def test_student_replaces_their_photo(
     client: Client, make_student: Callable[..., User]
 ) -> None:
@@ -122,6 +135,32 @@ def test_staff_have_no_profile_page_and_no_profile_link(
 
     assert client.get(reverse("profile_edit")).status_code == 404
     assert reverse("profile_edit").encode() not in client.get("/").content
+
+
+def test_staff_see_an_admin_link_and_students_dont(
+    client: Client, make_student: Callable[..., User], admin_client: Client
+) -> None:
+    client.force_login(make_student())
+
+    assert b'href="/admin/"' in admin_client.get("/").content
+    assert b'href="/admin/"' not in client.get("/").content
+
+
+@pytest.mark.parametrize(("staff", "landing"), [(True, "/admin/"), (False, "/")])
+def test_login_sends_staff_to_the_admin(
+    client: Client,
+    make_student: Callable[..., User],
+    make_staff: Callable[..., User],
+    staff: bool,
+    landing: str,
+) -> None:
+    user = make_staff() if staff else make_student()
+
+    response = client.post(
+        reverse("login"), {"username": user.email, "password": "s3cret-pass"}
+    )
+
+    assert response["Location"] == landing
 
 
 def test_students_see_the_profile_link(

@@ -15,7 +15,7 @@ admin.site.unregister(Group)
 urlpatterns: list[URLPattern | URLResolver] = [
     path(
         "accounts/login/",
-        auth_views.LoginView.as_view(authentication_form=EmailAuthenticationForm),
+        views.LoginView.as_view(authentication_form=EmailAuthenticationForm),
         name="login",
     ),
     # Public, so a stale "Log out" form just lands on the login page, with no `next`.

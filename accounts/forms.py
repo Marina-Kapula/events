@@ -20,7 +20,8 @@ class EmailAuthenticationForm(AuthenticationForm):
 
 
 class ProfileForm(forms.ModelForm[User]):
-    photo = PhotoField()
+    # A plain file input: the page shows the current photo itself, not its file name.
+    photo = PhotoField(widget=forms.FileInput(attrs={"accept": "image/*"}))
 
     class Meta:
         model = User
