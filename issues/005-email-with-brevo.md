@@ -1,6 +1,6 @@
 # Send email through Brevo
 
-Status: todo · Opened: 2026-11-21 · Milestone: M1 · Depends on: — (the production part after 004)
+Status: done · Opened: 2026-11-21 · Milestone: M1 · Depends on: — (the production part after 004)
 
 ## Why
 
@@ -122,8 +122,8 @@ def test_default_from_email_comes_from_the_environment() -> None:
     assert result.stdout.strip() == "meetups@example.com"
 ```
 
-- [ ] Both settings exist, with the defaults of SPEC.md §9, and are in `.env.example`.
-- [ ] The three tests pass.
+- [x] Both settings exist, with the defaults of SPEC.md §9, and are in `.env.example`.
+- [x] The three tests pass.
 
 ### 2. One function for every email
 
@@ -194,7 +194,7 @@ AMFI approved your event "{{ event.title }}". Here it is:
 it "D'Arcy & friends" arrives as `D&#x27;Arcy &amp; friends`. Django's own password reset email
 does the same.
 
-- [ ] `config/emails.py` as above.
+- [x] `config/emails.py` as above.
 
 ### 3. Test it
 
@@ -253,7 +253,7 @@ def test_links_start_with_the_site_url(mailoutbox: list[EmailMessage]) -> None:
     assert "https://meetups.example.com/my-events/" in mailoutbox[0].body
 ```
 
-- [ ] Both tests pass, and `scripts/check.sh` passes.
+- [x] Both tests pass, and `scripts/check.sh` passes.
 
 ### 4. Try it on your laptop
 
@@ -265,7 +265,7 @@ uv run python manage.py sendtestemail student1@example.com
 ls var/mail/                      # one new file; open it
 ```
 
-- [ ] The file shows `From: webmaster@localhost` (or your `.env` value) and the test text.
+- [x] The file shows `From: webmaster@localhost` (or your `.env` value) and the test text.
 
 ### 5. Open a Brevo account
 
@@ -282,7 +282,7 @@ ls var/mail/                      # one new file; open it
 
 Keep the key in your password manager, never in git, an issue, a chat or `.env.example`.
 
-- [ ] A verified sender, an SMTP login and an SMTP key.
+- [x] A verified sender, an SMTP login and an SMTP key.
 
 ### 6. Send a real email from your server (after 004)
 
@@ -313,21 +313,21 @@ While you are in the guide: its "Email" block doesn't set `DJANGO_DEFAULT_FROM_E
 still says "invitations" (from the old plan; it's verification links now). Fix both, so the next
 person gets it right.
 
-- [ ] The test email from the server arrives in your inbox.
-- [ ] `docs/deployment/deploy-to-dokku.md` part 9 sets `DJANGO_DEFAULT_FROM_EMAIL`.
+- [x] The test email from the server arrives in your inbox.
+- [x] `docs/deployment/deploy-to-dokku.md` part 9 sets `DJANGO_DEFAULT_FROM_EMAIL`.
 
 ## Done when
 
-- [ ] `DEFAULT_FROM_EMAIL` and `SITE_URL` come from `DJANGO_DEFAULT_FROM_EMAIL` and
+- [x] `DEFAULT_FROM_EMAIL` and `SITE_URL` come from `DJANGO_DEFAULT_FROM_EMAIL` and
       `DJANGO_SITE_URL`, are in `.env.example`, and are tested (step 1).
-- [ ] `send_email` renders the subject on one line and the body with `site_url` (tests in
+- [x] `send_email` renders the subject on one line and the body with `site_url` (tests in
       `tests/config/test_emails.py`).
-- [ ] `sendtestemail` writes a file in `var/mail/` on your laptop, and delivers a real email from
+- [x] `sendtestemail` writes a file in `var/mail/` on your laptop, and delivers a real email from
       your server through Brevo.
-- [ ] The SMTP key is only in Brevo, your password manager and `dokku config`.
-- [ ] The deploy guide sets the sender.
-- [ ] `scripts/check.sh` passes.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] The SMTP key is only in Brevo, your password manager and `dokku config`.
+- [x] The deploy guide sets the sender.
+- [x] `scripts/check.sh` passes.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 

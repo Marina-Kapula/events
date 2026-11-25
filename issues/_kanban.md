@@ -1,11 +1,6 @@
 # todo
 
-- [019-back-up-photos.md](019-back-up-photos.md)
-
 # on-progress
-
-- [004-first-deploy.md](004-first-deploy.md) ждёт подтверждения заказа OVH
-- [005-email-with-brevo.md](005-email-with-brevo.md) осталось только: шаг 6 (письмо с сервера, после 004)
 
 # done
 
@@ -25,6 +20,9 @@
 - [016-my-events.md](016-my-events.md)
 - [017-soft-delete-students.md](017-soft-delete-students.md)
 - [018-demo-data.md](018-demo-data.md)
+- [004-first-deploy.md](004-first-deploy.md)
+- [005-email-with-brevo.md](005-email-with-brevo.md)
+- [019-back-up-photos.md](019-back-up-photos.md)
 
 # backlog
 

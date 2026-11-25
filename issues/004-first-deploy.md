@@ -87,19 +87,19 @@ not in git.
 Order the VPS (an EU location, with IPv4), make your SSH key, log in, turn off password logins,
 and turn on the firewall.
 
-- [ ] Part 1: the VPS runs and has an IPv4 address.
-- [ ] Part 2: `ssh <SSH_USER>@<VPS_IP>` logs you in with your key.
-- [ ] Part 3: logging in without the key is refused (keep the first session open while you test).
-- [ ] Part 4: `sudo ufw status` shows OpenSSH, 80 and 443.
+- [x] Part 1: the VPS runs and has an IPv4 address.
+- [x] Part 2: `ssh <SSH_USER>@<VPS_IP>` logs you in with your key.
+- [x] Part 3: logging in without the key is refused (keep the first session open while you test).
+- [x] Part 4: `sudo ufw status` shows OpenSSH, 80 and 443.
 
 ### 2. Dokku (guide parts 5–7)
 
 Install Dokku, give it your public key, and install the Let's Encrypt plugin. Decide your
 `<DOMAIN>` here: `<APP>.<VPS_IP>.nip.io` needs no setup.
 
-- [ ] Part 5: `dokku version` prints a version.
-- [ ] Part 6: `sudo dokku ssh-keys:list` shows `admin`.
-- [ ] Part 7: `sudo dokku plugin:list` shows `letsencrypt`.
+- [x] Part 5: `dokku version` prints a version.
+- [x] Part 6: `sudo dokku ssh-keys:list` shows `admin`.
+- [x] Part 7: `sudo dokku plugin:list` shows `letsencrypt`.
 
 ### 3. The app, its storage and its settings (guide parts 8–9)
 
@@ -107,8 +107,8 @@ Create the app, the storage mount and the upload limit, then set the environment
 Skip the "Email" block of part 9: it needs a Brevo account, which comes in issue 005.
 `DJANGO_SITE_URL` is set already now; the emails use it later.
 
-- [ ] Part 8: `storage:report`, `domains:report` and `nginx:report` show what the guide says.
-- [ ] Part 9: `sudo dokku config:keys <APP>` includes `DJANGO_DEBUG`, `DJANGO_HTTPS`,
+- [x] Part 8: `storage:report`, `domains:report` and `nginx:report` show what the guide says.
+- [x] Part 9: `sudo dokku config:keys <APP>` includes `DJANGO_DEBUG`, `DJANGO_HTTPS`,
       `DJANGO_TIME_ZONE`, `DJANGO_ALLOWED_HOSTS`, `DJANGO_SITE_URL` and `DJANGO_SECRET_KEY`.
 
 ### 4. First deploy and HTTPS (guide parts 10–11)
@@ -117,9 +117,9 @@ Push `main` from your laptop and watch the output: the image build, `release` (t
 including `accounts.0001_initial` from issue 002), the healthcheck. Then turn on HTTPS. Don't log
 in before HTTPS works: over plain HTTP the login fails with a 403.
 
-- [ ] Part 10: the push ends without `remote: !` errors, and `http://<DOMAIN>` shows the login
+- [x] Part 10: the push ends without `remote: !` errors, and `http://<DOMAIN>` shows the login
       page.
-- [ ] Part 11: `https://<DOMAIN>` shows a lock in the browser, and `http://` redirects to it.
+- [x] Part 11: `https://<DOMAIN>` shows a lock in the browser, and `http://` redirects to it.
 
 ### 5. Your admin account (guide part 12)
 
@@ -132,9 +132,9 @@ Then let Django check the production settings from inside the server:
 ssh -t <SSH_USER>@<VPS_IP> sudo dokku run <APP> python manage.py check --deploy   # laptop
 ```
 
-- [ ] You log in at `https://<DOMAIN>/accounts/login/` with your email, and `/admin/` shows the
+- [x] You log in at `https://<DOMAIN>/accounts/login/` with your email, and `/admin/` shows the
       Users page.
-- [ ] `check --deploy` says "System check identified no issues (2 silenced)".
+- [x] `check --deploy` says "System check identified no issues (2 silenced)".
 
 ### 6. Your first backup (guide part 13, `backups.md`)
 
@@ -145,13 +145,13 @@ before you need it:
 scripts/pull-backup.sh <VPS_IP> <APP>   # laptop
 ```
 
-- [ ] `~/dokku-backups/<APP>/` has a database file that isn't empty.
+- [x] `~/dokku-backups/<APP>/` has a database file that isn't empty.
 
 ### 7. Optional: limit login attempts (guide part 15)
 
 Worth doing on a public server: it slows down anyone guessing passwords.
 
-- [ ] Eight quick wrong logins: the last ones answer `429`.
+- [ ] Eight quick wrong logins: the last ones answer `429`. (Optional: not done yet.)
 
 ### 8. Write down what happened
 
@@ -159,17 +159,17 @@ Fill in **Results** below. Problems you met are the most useful part: the next p
 next class) will meet them too. If a step of the guide was wrong or unclear, fix the guide in
 this branch.
 
-- [ ] Results filled in.
+- [x] Results filled in.
 
 ## Done when
 
-- [ ] `https://<DOMAIN>` shows the login page with a valid certificate, and `http://` redirects
+- [x] `https://<DOMAIN>` shows the login page with a valid certificate, and `http://` redirects
       to it.
-- [ ] You can log in with your admin email and open `/admin/`.
-- [ ] `sudo dokku ps:report <APP>` shows the app running, and `check --deploy` finds no issues.
-- [ ] A backup of the database is on your laptop.
-- [ ] Results are filled in, and any fix to the guide is in this branch.
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] You can log in with your admin email and open `/admin/`.
+- [x] `sudo dokku ps:report <APP>` shows the app running, and `check --deploy` finds no issues.
+- [x] A backup of the database is on your laptop.
+- [x] Results are filled in, and any fix to the guide is in this branch.
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 
@@ -239,10 +239,18 @@ the same ones? `docs/workflow/git.md` has every step.
 
 Fill this in when you are done. No passwords, keys or `config:show` output.
 
-- URL: `https://…`
-- Deployed on: YYYY-MM-DD, commit `…` (`git rev-parse --short HEAD`)
-- VPS: plan, data centre location
-- Time it took, roughly:
+- URL: `https://amfi-meetups.157.245.40.61.nip.io`
+- Deployed on: 2026-11-24, commit `dca640a`; redeployed since with each fix (`git push dokku main`).
+- VPS: DigitalOcean Basic droplet, 1 vCPU / 1 GB RAM, $6 a month, London (LON1), Ubuntu 24.04.
+- Time it took, roughly: an afternoon, most of it in the provider's sign-up and in Brevo.
 - Problems met, and how you solved them:
-  1. …
-- What you changed in the guide (if anything):
+  1. OVH: the order wasn't confirmed, so the server is on DigitalOcean instead. Same guide, with
+     two differences: the user is `root` (no `ubuntu`, so no `sudo` in the commands), and the
+     first `apt` run waited on a lock held by the droplet's own updates (`-o DPkg::Lock::Timeout=300`).
+  2. Frankfurt (FRA1) had no Basic plans that day: London is still in Europe for the GDPR.
+  3. 1 GB of RAM is tight for the Docker build: a 2 GB swap file fixed it.
+  4. Email goes through Brevo's HTTPS API (`EMAIL_BACKEND=config.brevo.BrevoEmailBackend`,
+     `BREVO_API_KEY`), not SMTP. A first key was an SMTP key (`xsmtpsib-…`), which the API
+     refuses with 401; the API needs an API key (`xkeysib-…`).
+  5. The QR code pointed at the laptop's address: `DJANGO_SITE_URL` must be the public URL.
+- What you changed in the guide (if anything): nothing; these notes are the differences.
