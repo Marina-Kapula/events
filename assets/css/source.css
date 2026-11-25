@@ -15,9 +15,16 @@
 @source "../../accounts/templates";
 @source "../../events/templates";
 
+/* iPhone Safari zooms into any field with text under 16px, and stays zoomed. */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
 /* Forms rendered with {{ form }} have no classes on their inputs: style them here. */
 @layer components {
-  .django-form input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]) {
+  .django-form input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"], [type="range"]) {
     @apply input w-full;
   }
   .django-form textarea {
@@ -35,7 +42,14 @@
   .django-form .helptext {
     @apply text-sm opacity-70;
   }
+  /* The theme's error colour is too pale for text: darken it. */
   .django-form .errorlist {
-    @apply text-error;
+    @apply text-sm font-medium;
+    color: color-mix(in oklab, var(--color-error) 55%, black);
   }
+}
+
+/* The same darker red for text-error (outside the layers, so it wins over daisyUI). */
+.text-error {
+  color: color-mix(in oklab, var(--color-error) 55%, black);
 }

@@ -1,7 +1,11 @@
+import base64
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_not_required
 from django.core.exceptions import ValidationError
+from django.core.files import File
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -10,14 +14,23 @@ from accounts.forms import ProfileForm, RegistrationForm, ResendVerificationForm
 from accounts.models import RegistrationWindow, User
 from accounts.services import user_register, user_verify, verification_resend
 
+# The session key of the photo kept after a registration form error.
+KEPT_PHOTO = "register_photo"
+
 
 @login_not_required
 def register(request: HttpRequest, code: str) -> HttpResponse:
     window = get_object_or_404(RegistrationWindow, code=code)
     if not window.is_open(now=timezone.now()):
         return render(request, "accounts/register_closed.html")
+    kept = request.session.get(KEPT_PHOTO)
     if request.method == "POST":
-        form = RegistrationForm(request.POST, request.FILES)
+        files = request.FILES.copy()
+        if "photo" not in files and kept:
+            files["photo"] = SimpleUploadedFile(
+                "photo.jpg", base64.b64decode(kept), content_type="image/jpeg"
+            )
+        form = RegistrationForm(request.POST, files)
         if form.is_valid():
             try:
                 user_register(
@@ -26,10 +39,24 @@ def register(request: HttpRequest, code: str) -> HttpResponse:
             except ValidationError as error:
                 form.add_error(None, error)
             else:
+                request.session.pop(KEPT_PHOTO, None)
                 return redirect("register_sent")
+        # A file input comes back empty after an error: keep the checked photo so
+        # the student doesn't pick it again for a typo in the password.
+        photo = form.cleaned_data.get("photo")
+        if isinstance(photo, File):
+            photo.seek(0)
+            kept = base64.b64encode(photo.read()).decode()
+            request.session[KEPT_PHOTO] = kept
     else:
         form = RegistrationForm()
-    return render(request, "accounts/register.html", {"form": form})
+    if kept:
+        form.fields["photo"].required = False  # no "required" attribute on the input
+    context = {
+        "form": form,
+        "kept_photo": f"data:image/jpeg;base64,{kept}" if kept else "",
+    }
+    return render(request, "accounts/register.html", context)
 
 
 @login_not_required

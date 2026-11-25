@@ -9,6 +9,10 @@ from django.utils.html import format_html
 from accounts.models import User
 from config.photos import PhotoField
 
+# Any image. The editor (templates/photo_editor.html) finds it by data-photo-input.
+# No capture attribute: it would open only the camera, never the gallery.
+PHOTO_INPUT = {"accept": "image/*", "data-photo-input": ""}
+
 
 class EmailAuthenticationForm(AuthenticationForm):
     @override
@@ -21,7 +25,7 @@ class EmailAuthenticationForm(AuthenticationForm):
 
 class ProfileForm(forms.ModelForm[User]):
     # A plain file input: the page shows the current photo itself, not its file name.
-    photo = PhotoField(widget=forms.FileInput(attrs={"accept": "image/*"}))
+    photo = PhotoField(widget=forms.FileInput(attrs=PHOTO_INPUT))
 
     class Meta:
         model = User
@@ -36,8 +40,8 @@ class ProfileForm(forms.ModelForm[User]):
 
 
 class RegistrationForm(BaseUserCreationForm[User]):
-    # On a phone, the photo field opens the front camera.
-    photo = PhotoField(widget=forms.FileInput(attrs={"capture": "user"}))
+    # On a phone, the photo field offers the camera or the gallery.
+    photo = PhotoField(widget=forms.FileInput(attrs=PHOTO_INPUT))
 
     class Meta(BaseUserCreationForm.Meta):
         model = User

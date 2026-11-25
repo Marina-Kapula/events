@@ -164,15 +164,57 @@ def test_register_form_creates_the_account_and_says_check_your_email(
     assert len(mailoutbox) == 1
 
 
-def test_register_form_asks_for_the_camera_on_phones(
+def test_register_form_offers_the_camera_or_the_gallery(
     client: Client, make_window: Callable[..., RegistrationWindow]
 ) -> None:
     window = make_window()
 
     response = client.get(reverse("register", args=(window.code,)))
 
-    assert b'capture="user"' in response.content
+    # capture="user" would open only the camera on an iPhone, never the gallery.
+    assert b"capture=" not in response.content
     assert b'accept="image/*"' in response.content
+    assert b"data-photo-input" in response.content
+    assert b'id="photo-editor"' in response.content
+
+
+def test_register_keeps_the_photo_after_a_form_error(
+    client: Client,
+    make_window: Callable[..., RegistrationWindow],
+    mailoutbox: list[mail.EmailMessage],
+) -> None:
+    url = reverse("register", args=(make_window().code,))
+
+    response = client.post(url, form_data(password2="a-typo-123"))
+
+    assert response.status_code == 200
+    assert b"data:image/jpeg;base64," in response.content
+    data = form_data()
+    del data["photo"]
+    response = client.post(url, data)
+    assert response["Location"] == reverse("register_sent")
+    assert User.objects.get(email="new@example.com").photo
+    assert "register_photo" not in client.session
+
+
+def test_register_without_a_photo_asks_for_one(
+    client: Client, make_window: Callable[..., RegistrationWindow]
+) -> None:
+    data = form_data()
+    del data["photo"]
+
+    response = client.post(reverse("register", args=(make_window().code,)), data)
+
+    assert response.status_code == 200
+    assert response.context["form"].errors["photo"]
+    assert not User.objects.filter(email="new@example.com").exists()
+
+
+def test_a_wrong_qr_link_gets_a_friendly_page(client: Client) -> None:
+    response = client.get("/register/not-a-code/")
+
+    assert response.status_code == 404
+    assert b"ask the AMFI staff for a new one" in response.content
 
 
 def test_register_form_refuses_when_the_window_closed_meanwhile(

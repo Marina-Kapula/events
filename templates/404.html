@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found · AMFI Meetups{% endblock %}
+
+{% block header %}{% if user.is_authenticated %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block content %}
+<main id="main" class="flex min-h-[70vh] items-center justify-center px-4 py-10">
+  <div class="card w-full max-w-sm bg-base-100 shadow-sm">
+    <div class="card-body items-center text-center">
+      <p class="text-5xl" aria-hidden="true">🧭</p>
+      <h1 class="card-title">This page isn't here</h1>
+      <p class="opacity-70">The link may be old or cut short. If you scanned a QR code to register, ask the AMFI staff for a new one.</p>
+      <a href="{% url 'home' %}" class="btn btn-primary mt-2">Go to the events</a>
+    </div>
+  </div>
+</main>
+{% endblock %}
