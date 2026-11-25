@@ -85,11 +85,14 @@
         {% for participation in going %}
           {% with student=participation.user %}
           <li class="flex items-center gap-3">
-            <a href="{% url 'student_detail' student.pk %}" class="flex items-center gap-3 link-hover">
-              <img src="{{ student.photo.url }}" alt="" width="48" height="48" class="size-12 rounded-full object-cover">
-              {{ student.full_name }}
+            {# Name above, age and nationality below: side by side they break badly on a phone. #}
+            <a href="{% url 'student_detail' student.pk %}" class="flex min-w-0 items-center gap-3 link-hover">
+              <img src="{{ student.photo.url }}" alt="" width="48" height="48" class="size-12 shrink-0 rounded-full object-cover">
+              <span class="flex min-w-0 flex-col">
+                <span>{{ student.full_name }}</span>
+                <span class="text-sm opacity-70">{{ student.age }} · {{ student.nationality.name }}</span>
+              </span>
             </a>
-            <span class="text-sm opacity-70">{{ student.age }} · {{ student.nationality.name }}</span>
           </li>
           {% endwith %}
         {% endfor %}
