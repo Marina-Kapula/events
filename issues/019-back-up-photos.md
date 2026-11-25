@@ -1,6 +1,6 @@
 # Back up the photos too
 
-Status: todo · Opened: 2026-11-21 · Milestone: M3 · Depends on: 004, 006
+Status: done · Opened: 2026-11-21 · Milestone: M3 · Depends on: 004, 006
 
 ## Why
 
@@ -65,7 +65,7 @@ Why this and not something else:
 - **One archive per run** is one file you can check (`tar -tzf`), keep 30 of, and restore with
   one command. Photos are small (at most 1024 px, 006), so a full copy each time is fine.
 
-- [ ] You can explain each part of the `tar` command.
+- [x] You can explain each part of the `tar` command.
 
 ### 2. The new script
 
@@ -181,7 +181,7 @@ What changed, and why:
 - **`umask 077`** (unchanged) makes both files readable by you only: the photos are personal
   data, like the database.
 
-- [ ] `scripts/pull-backup.sh` as above.
+- [x] `scripts/pull-backup.sh` as above.
 
 ### 3. Check the script
 
@@ -194,7 +194,7 @@ Install ShellCheck with `brew install shellcheck` (macOS) or `sudo apt install s
 (Ubuntu, WSL). Without installing anything: `uvx --from shellcheck-py shellcheck
 scripts/pull-backup.sh`.
 
-- [ ] Both commands print nothing.
+- [x] Both commands print nothing.
 
 ### 4. Test it against your server
 
@@ -235,7 +235,7 @@ what you saw in the pull request.
    rest afterwards: `rm ~/dokku-backups/<APP>/media-2000-*`.
 6. `ls -l ~/dokku-backups/<APP>` shows `-rw-------` for the new files: only you can read them.
 
-- [ ] Steps 1–6 done on your server; what you saw is in the pull request.
+- [x] Steps 1–6 done on your server; what you saw is in the pull request.
 
 ### 5. Update the notes
 
@@ -270,18 +270,18 @@ In `docs/deployment/backups.md`:
 And in `docs/index.md`, the Backups line: "pull a copy of the database and the photos with
 `scripts/pull-backup.sh`, restore them".
 
-- [ ] `backups.md` and `index.md` updated.
+- [x] `backups.md` and `index.md` updated.
 
 ## Done when
 
-- [ ] `scripts/pull-backup.sh <VPS_IP> <APP> [SSH_USER]` saves the database and a photos archive
+- [x] `scripts/pull-backup.sh <VPS_IP> <APP> [SSH_USER]` saves the database and a photos archive
       with the same date stamp, checks both, and keeps the newest 30 of each.
-- [ ] With no photos on the server it still saves the database and says so.
-- [ ] `bash -n` and `shellcheck` are clean.
-- [ ] Tested by hand against your server (step 4); the pull request says what you saw.
-- [ ] `docs/deployment/backups.md` explains the photos backup and their restore.
-- [ ] `scripts/check.sh` passes (nothing in it changed, but the pre-commit hook runs it).
-- [ ] This issue's tasks are ticked and its `Status:` line says done.
+- [x] With no photos on the server it still saves the database and says so.
+- [x] `bash -n` and `shellcheck` are clean.
+- [x] Tested by hand against your server (step 4); the pull request says what you saw.
+- [x] `docs/deployment/backups.md` explains the photos backup and their restore.
+- [x] `scripts/check.sh` passes (nothing in it changed, but the pre-commit hook runs it).
+- [x] This issue's tasks are ticked and its `Status:` line says done.
 
 ## Git
 
@@ -312,6 +312,19 @@ server's address) and the `ls -l` of step 4.6.
 - **`<SSH_USER>` must be the user with id 1000** (OVH's `ubuntu` is). Another user can't read the
   photos without `sudo`, and the database part would fail first anyway.
 - **Windows**: run it in Git Bash or WSL, as before: both have `ssh` and `tar`.
+
+## Results
+
+- Tested 2026-11-25 against the DigitalOcean droplet, as `root` (the third argument): on this
+  server there is no `ubuntu` user, and root can read the storage directory.
+- Output: `Saved …/db-2026-11-25-0936.sqlite3` and `Saved …/media-2026-11-25-0936.tar.gz`.
+  The archive lists `media/photos/events/…` and `media/photos/users/…` (5 photos); unpacked in a
+  scratch folder, the photos open, and the folder was deleted. The database copy passes
+  `integrity_check`.
+- Rotation: with 31 fake `media-2000-01-*` files, one run left exactly 30 media files.
+- On Windows (Git Bash on NTFS) `ls -l` shows `-rw-r--r--`: `umask 077` has no effect there.
+  The files are still private, because `~` is only readable by your Windows account; keep that
+  folder out of OneDrive.
 
 ## Further reading
 

@@ -50,8 +50,8 @@ Do each once and watch what happens, with real output to compare; each issue say
   logs, troubleshooting.
 - [Deploy to Render](deployment/render.md): the free alternative, with Postgres and
   Brevo's API.
-- [Backups](deployment/backups.md): pull a copy of the database with `scripts/pull-backup.sh`,
-  restore it.
+- [Backups](deployment/backups.md): pull a copy of the database and the photos with
+  `scripts/pull-backup.sh`, restore them.
 
 ## Accounts
 
