@@ -211,3 +211,19 @@ def test_a_pending_card_says_sign_ups_open_later(
 
     assert "Sign-ups open once approved" in page
     assert "Be the first to join!" not in page
+
+
+def test_the_whole_card_is_one_link(
+    client: Client, make_event: Callable[..., Event], make_student: Callable[..., User]
+) -> None:
+    event = make_event()
+    client.force_login(make_student())
+
+    page = client.get("/").content.decode()
+
+    # The title's link stretches over the card, above its faded text and avatars,
+    # and the card is isolated so the link never covers the phone's bottom menu.
+    url = f"/events/{event.pk}/"
+    assert f'<a href="{url}" class="after:absolute after:inset-0 after:z-10' in page
+    assert page.count(f'href="{url}"') == 1
+    assert "card relative isolate" in page

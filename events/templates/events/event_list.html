@@ -33,7 +33,8 @@
   <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {% for event in events %}
       {% partialdef event_card inline %}
-      <article class="card min-w-0 flex-1 bg-base-100 shadow-sm">
+      {# The whole card opens the event: the title's link stretches over it (after:inset-0). #}
+      <article class="card relative isolate min-w-0 flex-1 bg-base-100 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2">
         <figure class="relative aspect-video">
           <img src="{{ event.photo.url }}" alt="" class="h-full w-full object-cover">
           {% if event.status == "approved" and event.starts_at > now %}
@@ -64,7 +65,7 @@
             {% endif %}
           </div>
           <p class="text-sm opacity-70"><time datetime="{{ event.starts_at|date:'c' }}">{{ event.starts_at|date:"D j M Y · H:i" }}</time></p>
-          <h2 class="card-title text-lg"><a href="{% url 'event_detail' event.pk %}" class="link-hover">{{ event.title }}</a></h2>
+          <h2 class="card-title text-lg"><a href="{% url 'event_detail' event.pk %}" class="after:absolute after:inset-0 after:z-10 after:rounded-box focus-visible:outline-none">{{ event.title }}</a></h2>
           <p class="text-sm">{{ event.city }} · {{ event.place }}</p>
           <p class="text-sm opacity-70">by {% if event.organizer.is_staff %}AMFI{% elif event.organizer.deleted_at %}a deleted student{% else %}{{ event.organizer.full_name }}{% endif %}</p>
           <div class="mt-2 flex w-full items-center justify-between gap-2">
